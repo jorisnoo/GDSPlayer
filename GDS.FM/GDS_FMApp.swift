@@ -115,12 +115,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         if let trackTitle = player.trackTitle, let artistName = player.artistName {
-            let item = NSMenuItem(title: "\(artistName) — \(trackTitle)", action: nil, keyEquivalent: "")
-            item.isEnabled = false
+            let item = NSMenuItem(title: "\(artistName) — \(trackTitle)", action: #selector(searchTrack(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = ["artist": artistName, "track": trackTitle]
             menu.addItem(item)
         } else if let trackTitle = player.trackTitle {
-            let item = NSMenuItem(title: trackTitle, action: nil, keyEquivalent: "")
-            item.isEnabled = false
+            let item = NSMenuItem(title: trackTitle, action: #selector(searchTrack(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = ["artist": "", "track": trackTitle]
             menu.addItem(item)
         }
 
@@ -146,6 +148,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         menu.addItem(.separator())
 
+        let musicServiceMenu = NSMenu()
+        for service in MusicService.allCases {
+            let serviceItem = NSMenuItem(
+                title: service.displayName,
+                action: #selector(selectMusicService(_:)),
+                keyEquivalent: ""
+            )
+            serviceItem.target = self
+            serviceItem.representedObject = service
+            if service == PreferencesManager.shared.selectedMusicService {
+                serviceItem.state = .on
+            }
+            musicServiceMenu.addItem(serviceItem)
+        }
+
+        let musicServiceItem = NSMenuItem(title: "Music Service", action: nil, keyEquivalent: "")
+        musicServiceItem.submenu = musicServiceMenu
+        menu.addItem(musicServiceItem)
+
+        menu.addItem(.separator())
+
         let quitItem = NSMenuItem(title: "Quit", action: #selector(quit), keyEquivalent: "q")
         quitItem.target = self
         menu.addItem(quitItem)
@@ -163,5 +186,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func quit() {
         NSApplication.shared.terminate(nil)
+    }
+
+    @objc private func searchTrack(_ sender: NSMenuItem) {
+        guard let info = sender.representedObject as? [String: String],
+              let artist = info["artist"],
+              let track = info["track"] else {
+            return
+        }
+
+        MusicSearchService.openSearch(
+            artist: artist,
+            track: track,
+            service: PreferencesManager.shared.selectedMusicService
+        )
+    }
+
+    @objc private func selectMusicService(_ sender: NSMenuItem) {
+        guard let service = sender.representedObject as? MusicService else {
+            return
+        }
+
+        PreferencesManager.shared.selectedMusicService = service
     }
 }

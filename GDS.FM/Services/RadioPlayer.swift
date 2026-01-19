@@ -1,5 +1,7 @@
+import AppKit
 import AVFoundation
 import Foundation
+import MediaPlayer
 
 enum PlaybackState {
     case stopped
@@ -15,6 +17,7 @@ final class RadioPlayer {
     private var player: AVPlayer?
     private var pollingTimer: Timer?
     private var timeControlStatusObserver: NSKeyValueObservation?
+    private var mediaKeyMonitor: Any?
 
     private(set) var state: PlaybackState = .stopped
     private(set) var showName: String?
@@ -28,6 +31,79 @@ final class RadioPlayer {
             await fetchTrackInfo()
         }
         startPolling()
+        setupRemoteCommandCenter()
+        setupMediaKeyMonitor()
+    }
+
+    private func setupMediaKeyMonitor() {
+        mediaKeyMonitor = NSEvent.addGlobalMonitorForEvents(matching: .systemDefined) { [weak self] event in
+            guard event.subtype.rawValue == 8 else { return }
+
+            let keyCode = ((event.data1 & 0xFFFF0000) >> 16)
+            let keyFlags = (event.data1 & 0x0000FFFF)
+            let keyState = ((keyFlags & 0xFF00) >> 8) == 0xA
+
+            // Only respond on key down
+            guard keyState else { return }
+
+            Task { @MainActor [weak self] in
+                switch keyCode {
+                case 16: // Play/Pause
+                    self?.togglePlayback()
+                case 19: // Next (optional)
+                    break
+                case 20: // Previous (optional)
+                    break
+                default:
+                    break
+                }
+            }
+        }
+    }
+
+    private func setupRemoteCommandCenter() {
+        let commandCenter = MPRemoteCommandCenter.shared()
+
+        commandCenter.playCommand.isEnabled = true
+        commandCenter.playCommand.addTarget { [weak self] _ in
+            Task { @MainActor [weak self] in
+                self?.play()
+            }
+            return .success
+        }
+
+        commandCenter.pauseCommand.isEnabled = true
+        commandCenter.pauseCommand.addTarget { [weak self] _ in
+            Task { @MainActor [weak self] in
+                self?.pause()
+            }
+            return .success
+        }
+
+        commandCenter.togglePlayPauseCommand.isEnabled = true
+        commandCenter.togglePlayPauseCommand.addTarget { [weak self] _ in
+            Task { @MainActor [weak self] in
+                self?.togglePlayback()
+            }
+            return .success
+        }
+
+        // Disable unused commands
+        commandCenter.nextTrackCommand.isEnabled = false
+        commandCenter.previousTrackCommand.isEnabled = false
+        commandCenter.skipForwardCommand.isEnabled = false
+        commandCenter.skipBackwardCommand.isEnabled = false
+    }
+
+    private func updateNowPlayingInfo() {
+        var info = [String: Any]()
+        info[MPMediaItemPropertyTitle] = trackTitle ?? "GDS.FM"
+        info[MPMediaItemPropertyArtist] = artistName ?? showName ?? "Live Radio"
+        info[MPNowPlayingInfoPropertyIsLiveStream] = true
+
+        let nowPlayingCenter = MPNowPlayingInfoCenter.default()
+        nowPlayingCenter.nowPlayingInfo = info
+        nowPlayingCenter.playbackState = .playing
     }
 
     func togglePlayback() {
@@ -49,6 +125,7 @@ final class RadioPlayer {
         state = .loading
         onStateChange?()
         player?.play()
+        updateNowPlayingInfo()
     }
 
     func pause() {
@@ -57,6 +134,10 @@ final class RadioPlayer {
         timeControlStatusObserver = nil
         state = .stopped
         onStateChange?()
+
+        let nowPlayingCenter = MPNowPlayingInfoCenter.default()
+        nowPlayingCenter.playbackState = .stopped
+        nowPlayingCenter.nowPlayingInfo = nil
     }
 
     private func observePlaybackStatus() {
@@ -97,6 +178,10 @@ final class RadioPlayer {
             artistName = liveInfo.tracks.current?.metadata?.artistName
             trackTitle = liveInfo.tracks.current?.metadata?.trackTitle
             onStateChange?()
+
+            if state == .playing {
+                updateNowPlayingInfo()
+            }
         } catch {
             print("Failed to fetch track info: \(error)")
         }

@@ -8,7 +8,6 @@ A minimal macOS menubar app for streaming [GDS.FM](https://gds.fm) radio.
 - **Right-click** to open menu with current track info
 - Autoplay on launch
 - Shows current show name and track (artist — title)
-- No dock icon — lives entirely in the menubar
 
 ## Requirements
 
