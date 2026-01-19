@@ -5,6 +5,7 @@ final class PreferencesManager {
     static let shared = PreferencesManager()
 
     private let musicServiceKey = "selectedMusicService"
+    private let showVinylIconKey = "showVinylIcon"
 
     private init() {}
 
@@ -19,6 +20,19 @@ final class PreferencesManager {
         }
         set {
             UserDefaults.standard.set(newValue.rawValue, forKey: musicServiceKey)
+        }
+    }
+
+    var showVinylIcon: Bool {
+        get {
+            if UserDefaults.standard.object(forKey: showVinylIconKey) == nil {
+                return true
+            }
+
+            return UserDefaults.standard.bool(forKey: showVinylIconKey)
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: showVinylIconKey)
         }
     }
 }

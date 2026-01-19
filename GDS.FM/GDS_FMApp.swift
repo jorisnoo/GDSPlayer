@@ -17,6 +17,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var player = RadioPlayer()
     private var rotationTimer: Timer?
     private var rotationAngle: CGFloat = 0
+    private var rotationIncrement: CGFloat = 0
+    private var currentRotatingSymbol: String?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
@@ -50,34 +52,49 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func updateIcon() {
+        let showVinyl = PreferencesManager.shared.showVinylIcon
+
         switch player.state {
         case .stopped:
             stopRotation()
-            statusItem.button?.image = NSImage(systemSymbolName: "play.fill", accessibilityDescription: "GDS.FM")
+            if showVinyl {
+                statusItem.button?.image = NSImage(systemSymbolName: "opticaldisc.fill", accessibilityDescription: "GDS.FM")
+            } else {
+                statusItem.button?.image = NSImage(systemSymbolName: "play.fill", accessibilityDescription: "GDS.FM")
+            }
         case .loading:
-            startRotation()
+            startRotation(symbolName: "circle.dashed", interval: 0.1, increment: -30)
         case .playing:
-            stopRotation()
-            statusItem.button?.image = NSImage(systemSymbolName: "pause.fill", accessibilityDescription: "GDS.FM")
+            if showVinyl {
+                startRotation(symbolName: "opticaldisc.fill", interval: 0.05, increment: -3)
+            } else {
+                stopRotation()
+                statusItem.button?.image = NSImage(systemSymbolName: "pause.fill", accessibilityDescription: "GDS.FM")
+            }
         }
     }
 
-    private func startRotation() {
-        guard rotationTimer == nil else { return }
-
+    private func startRotation(symbolName: String, interval: TimeInterval, increment: CGFloat) {
+        stopRotation()
+        currentRotatingSymbol = symbolName
+        rotationIncrement = increment
         rotationAngle = 0
         updateRotatingIcon()
 
-        rotationTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+        rotationTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in
-                self?.rotationAngle -= 30
-                self?.updateRotatingIcon()
+                guard let self else { return }
+                self.rotationAngle += self.rotationIncrement
+                self.updateRotatingIcon()
             }
         }
     }
 
     private func updateRotatingIcon() {
-        guard let image = NSImage(systemSymbolName: "circle.dashed", accessibilityDescription: "Loading") else { return }
+        guard let symbolName = currentRotatingSymbol,
+              let image = NSImage(systemSymbolName: symbolName, accessibilityDescription: "GDS.FM") else {
+            return
+        }
 
         let rotatedImage = NSImage(size: image.size, flipped: false) { rect in
             let transform = NSAffineTransform()
@@ -96,6 +113,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func stopRotation() {
         rotationTimer?.invalidate()
         rotationTimer = nil
+        currentRotatingSymbol = nil
     }
 
     @discardableResult
@@ -148,7 +166,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         menu.addItem(.separator())
 
-        let musicServiceMenu = NSMenu()
+        let settingsMenu = NSMenu()
+
+        // Music Service header
+        let musicServiceHeader = NSMenuItem(title: "Music Service", action: nil, keyEquivalent: "")
+        musicServiceHeader.isEnabled = false
+        settingsMenu.addItem(musicServiceHeader)
+
         for service in MusicService.allCases {
             let serviceItem = NSMenuItem(
                 title: service.displayName,
@@ -160,12 +184,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             if service == PreferencesManager.shared.selectedMusicService {
                 serviceItem.state = .on
             }
-            musicServiceMenu.addItem(serviceItem)
+            settingsMenu.addItem(serviceItem)
         }
 
-        let musicServiceItem = NSMenuItem(title: "Music Service", action: nil, keyEquivalent: "")
-        musicServiceItem.submenu = musicServiceMenu
-        menu.addItem(musicServiceItem)
+        settingsMenu.addItem(.separator())
+
+        // Icon settings
+        let vinylIconItem = NSMenuItem(
+            title: "Show Vinyl Icon",
+            action: #selector(toggleVinylIcon(_:)),
+            keyEquivalent: ""
+        )
+        vinylIconItem.target = self
+        vinylIconItem.state = PreferencesManager.shared.showVinylIcon ? .on : .off
+        settingsMenu.addItem(vinylIconItem)
+
+        let settingsItem = NSMenuItem(title: "Settings", action: nil, keyEquivalent: "")
+        settingsItem.submenu = settingsMenu
+        menu.addItem(settingsItem)
 
         menu.addItem(.separator())
 
@@ -208,5 +244,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         PreferencesManager.shared.selectedMusicService = service
+    }
+
+    @objc private func toggleVinylIcon(_ sender: NSMenuItem) {
+        PreferencesManager.shared.showVinylIcon.toggle()
+        updateIcon()
     }
 }
