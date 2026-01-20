@@ -3,6 +3,7 @@ import Foundation
 enum MusicService: String, CaseIterable {
     case appleMusic
     case spotify
+    case tidal
 
     var displayName: String {
         switch self {
@@ -10,6 +11,8 @@ enum MusicService: String, CaseIterable {
             return "Apple Music"
         case .spotify:
             return "Spotify"
+        case .tidal:
+            return "Tidal"
         }
     }
 }

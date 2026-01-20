@@ -14,6 +14,8 @@ enum MusicSearchService {
             urlString = "https://music.apple.com/search?term=\(encodedQuery)"
         case .spotify:
             urlString = "https://open.spotify.com/search/\(encodedQuery)"
+        case .tidal:
+            urlString = "https://tidal.com/search?q=\(encodedQuery)"
         }
 
         guard let url = URL(string: urlString) else {
