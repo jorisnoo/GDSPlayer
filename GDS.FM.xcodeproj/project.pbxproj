@@ -8,6 +8,7 @@
 
 /* Begin PBXFileReference section */
 		CF4891A32F1D1DEB002E107B /* GDS.FM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GDS.FM.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF71B59F2F2040D000DD2112 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -32,6 +33,7 @@
 		CF48919A2F1D1DEB002E107B = {
 			isa = PBXGroup;
 			children = (
+				CF71B59F2F2040D000DD2112 /* AppIcon.icon */,
 				CF4891A52F1D1DEB002E107B /* GDS.FM */,
 				CF4891A42F1D1DEB002E107B /* Products */,
 			);
