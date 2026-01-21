@@ -6,9 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		CF9000652F20C59000D83F6F /* GDSAppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = CF9000642F20C59000D83F6F /* GDSAppIcon.icon */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		CF4891A32F1D1DEB002E107B /* GDS.FM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GDS.FM.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		CF71B59F2F2040D000DD2112 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
+		CF9000642F20C59000D83F6F /* GDSAppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = GDSAppIcon.icon; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -33,9 +37,9 @@
 		CF48919A2F1D1DEB002E107B = {
 			isa = PBXGroup;
 			children = (
-				CF71B59F2F2040D000DD2112 /* AppIcon.icon */,
 				CF4891A52F1D1DEB002E107B /* GDS.FM */,
 				CF4891A42F1D1DEB002E107B /* Products */,
+				CF9000642F20C59000D83F6F /* GDSAppIcon.icon */,
 			);
 			sourceTree = "<group>";
 		};
@@ -111,6 +115,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF9000652F20C59000D83F6F /* GDSAppIcon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -250,7 +255,7 @@
 		CF4891B12F1D1DEB002E107B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = GDSAppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = GDS.FM/GDS.FM.entitlements;
 				CODE_SIGN_STYLE = Automatic;
@@ -284,7 +289,7 @@
 		CF4891B22F1D1DEB002E107B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = GDSAppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = GDS.FM/GDS.FM.entitlements;
 				CODE_SIGN_STYLE = Automatic;
