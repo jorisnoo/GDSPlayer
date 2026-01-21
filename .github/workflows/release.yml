@@ -1,0 +1,90 @@
+name: Build, Sign, Notarize and Release
+
+on:
+  push:
+    tags:
+      - '[0-9]*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Sync version to Xcode project
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          echo "Syncing version $VERSION to Xcode project..."
+          sed -i '' "s/MARKETING_VERSION = [^;]*;/MARKETING_VERSION = $VERSION;/g" \
+            GDS.FM.xcodeproj/project.pbxproj
+
+      - name: Commit version sync
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "chore: sync version ${{ steps.version.outputs.VERSION }} to Xcode"
+          file_pattern: "GDS.FM.xcodeproj/project.pbxproj"
+          branch: main
+
+      - name: Import code signing certificate
+        env:
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+          MACOS_CI_KEYCHAIN_PWD: ${{ secrets.MACOS_CI_KEYCHAIN_PWD }}
+        run: |
+          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+
+          echo -n "$MACOS_CERTIFICATE" | base64 --decode -o $CERTIFICATE_PATH
+
+          security create-keychain -p "$MACOS_CI_KEYCHAIN_PWD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$MACOS_CI_KEYCHAIN_PWD" $KEYCHAIN_PATH
+
+          security import $CERTIFICATE_PATH -P "$MACOS_CERTIFICATE_PWD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security set-key-partition-list -S apple-tool:,apple: -k "$MACOS_CI_KEYCHAIN_PWD" $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+
+      - name: Install create-dmg
+        run: brew install create-dmg
+
+      - name: Build, sign, and notarize
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          MACOS_CERTIFICATE_NAME: ${{ secrets.MACOS_CERTIFICATE_NAME }}
+        run: |
+          ./scripts/build-release.sh --clean --version "${{ steps.version.outputs.VERSION }}"
+
+      - name: Extract release notes from CHANGELOG
+        id: changelog
+        run: |
+          VERSION="${{ steps.version.outputs.VERSION }}"
+          awk "/^## .*${VERSION}/,/^## .*[0-9]+\.[0-9]+\.[0-9]+/{if(/^## .*[0-9]+\.[0-9]+\.[0-9]+/ && !/^## .*${VERSION}/)exit; print}" CHANGELOG.md > $RUNNER_TEMP/release_notes.md
+          cat $RUNNER_TEMP/release_notes.md
+
+      - name: Create GitHub Release
+        run: |
+          gh release create "${{ steps.version.outputs.VERSION }}" \
+            "build/GDS.FM-${{ steps.version.outputs.VERSION }}.dmg" \
+            "build/GDS.FM-${{ steps.version.outputs.VERSION }}.zip" \
+            --title "Release ${{ steps.version.outputs.VERSION }}" \
+            --notes-file "$RUNNER_TEMP/release_notes.md"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cleanup keychain
+        if: always()
+        run: |
+          security delete-keychain $RUNNER_TEMP/app-signing.keychain-db || true

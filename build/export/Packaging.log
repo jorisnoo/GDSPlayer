@@ -1,0 +1,105 @@
+2026-01-21 07:58:07 +0000 [MT] Initial pipeline context: <IDEDistributionProcessingPipelineContext: 0xaf878c600; archive(resolved)="<IDEArchive: 0xaf85834f0>", distributionTask(resolved)="2", distributionDestination(resolved)="1", distributionMethod(resolved)="<IDEDistributionMethodDeveloperID: 0xaf5c04230>", team(resolved)="<IDEProvisioningBasicTeam: 0xaf86fcb60; teamID='T84UJ8Z67C', teamName='(null)'>">
+	Chain (12, self inclusive):
+	<IDEDistributionProcessingPipelineContext: 0xaf878c600; archive = "<IDEArchive: 0xaf85834f0>", distributionMethod="<IDEDistributionMethodDeveloperID: 0xaf5c04230>", team="<IDEProvisioningBasicTeam: 0xaf86fcb60; teamID='T84UJ8Z67C', teamName='(null)'>">
+	<IDEDistributionProcessingPipelineContext: 0xaf878c300; archive = "<IDEArchive: 0xaf85834f0>", distributionMethod="<IDEDistributionMethodDeveloperID: 0xaf5c04230>", team="<IDEProvisioningBasicTeam: 0xaf86fcb60; teamID='T84UJ8Z67C', teamName='(null)'>">
+	<IDEDistributionContext: 0xaf6415e00; archive = "<IDEArchive: 0xaf85834f0>", distributionMethod="<IDEDistributionMethodDeveloperID: 0xaf5c04230>", team="<IDEProvisioningBasicTeam: 0xaf86fcb60; teamID='T84UJ8Z67C', teamName='(null)'>">
+	<IDEDistributionContext: 0xaf6415b80; archive = "<IDEArchive: 0xaf85834f0>", distributionMethod="<IDEDistributionMethodDeveloperID: 0xaf5c04230>", team="<IDEProvisioningBasicTeam: 0xaf86fcb60; teamID='T84UJ8Z67C', teamName='(null)'>">
+	<IDEDistributionContext: 0xaf6415900; archive = "<IDEArchive: 0xaf85834f0>", distributionMethod="<IDEDistributionMethodDeveloperID: 0xaf5c04230>", team="<IDEProvisioningBasicTeam: 0xaf86fcb60; teamID='T84UJ8Z67C', teamName='(null)'>">
+	<IDEDistributionContext: 0xaf6415680; archive = "<IDEArchive: 0xaf85834f0>", distributionMethod="<IDEDistributionMethodDeveloperID: 0xaf5c04230>", team="<IDEProvisioningBasicTeam: 0xaf86fcb60; teamID='T84UJ8Z67C', teamName='(null)'>">
+	<IDEDistributionContext: 0xaf6414780; archive = "<IDEArchive: 0xaf85834f0>", distributionMethod="<IDEDistributionMethodDeveloperID: 0xaf5c04230>", team="<IDEProvisioningBasicTeam: 0xaf86fcb60; teamID='T84UJ8Z67C', teamName='(null)'>">
+	<IDEDistributionContext: 0xaf6414500; archive = "<IDEArchive: 0xaf85834f0>", distributionMethod="<IDEDistributionMethodDeveloperID: 0xaf5c04230>", team="<IDEProvisioningBasicTeam: 0xaf86fcb60; teamID='T84UJ8Z67C', teamName='(null)'>">
+	<IDEDistributionContext: 0xaf6414280; archive = "<IDEArchive: 0xaf85834f0>", distributionMethod="<IDEDistributionMethodDeveloperID: 0xaf5c04230>", team="<IDEProvisioningBasicTeam: 0xaf86fcb60; teamID='T84UJ8Z67C', teamName='(null)'>">
+	<IDEDistributionContext: 0xaf6414000; archive = "<IDEArchive: 0xaf85834f0>", distributionMethod="<IDEDistributionMethodDeveloperID: 0xaf5c04230>", team="(null)">
+	<IDEDistributionContext: 0x105383420; archive = "<IDEArchive: 0xaf85834f0>", distributionMethod="<IDEDistributionMethodDeveloperID: 0xaf5c04230>", team="(null)">
+	<IDEDistributionContext: 0x10537ff20; archive = "<IDEArchive: 0xaf85834f0>", distributionMethod="(null)", team="(null)">
+</IDEDistributionProcessingPipelineContext: 0xaf878c600>
+2026-01-21 07:58:07 +0000 [MT] Processing step: IDEDistributionCreateDestRootStep
+2026-01-21 07:58:07 +0000 [MT] Processing step: IDEDistributionCopyItemStep
+2026-01-21 07:58:07 +0000 [MT] Running /usr/bin/ditto '-V' '/Users/jorge/Sites/xcode/GDS.FM/build/GDS.FM.xcarchive/Products/Applications/GDS.FM.app' '/var/folders/q6/_6xpw3vs3f5fkm0h6vv4jsnw0000gn/T/XcodeDistPipeline.~~~h6R7Kw/Root/Applications/GDS.FM.app'
+2026-01-21 07:58:07 +0000  >>> Copying /Users/jorge/Sites/xcode/GDS.FM/build/GDS.FM.xcarchive/Products/Applications/GDS.FM.app 
+2026-01-21 07:58:07 +0000  copying file ./Contents/_CodeSignature/CodeResources ... 
+2026-01-21 07:58:07 +0000  2200 bytes for ./Contents/_CodeSignature/CodeResources
+2026-01-21 07:58:07 +0000  copying file ./Contents/MacOS/GDS.FM ... 
+2026-01-21 07:58:07 +0000  302256 bytes for ./Contents/MacOS/GDS.FM
+2026-01-21 07:58:07 +0000  copying file ./Contents/Info.plist ... 
+2026-01-21 07:58:07 +0000  1306 bytes for ./Contents/Info.plist
+2026-01-21 07:58:07 +0000  copying file ./Contents/PkgInfo ... 
+2026-01-21 07:58:07 +0000  8 bytes for ./Contents/PkgInfo
+2026-01-21 07:58:07 +0000 [MT] /usr/bin/ditto exited with 0
+2026-01-21 07:58:07 +0000 [MT] Processing step: IDEDistributionEmbedProfileStep
+2026-01-21 07:58:07 +0000 [MT] Skipping profile for item: <IDEDistributionItem: 0xaf606cde0; bundleID='ch.noordermeer.GDS-FM', path='<DVTFilePath:0xaf6bf38a0:'/Users/jorge/Sites/xcode/GDS.FM/build/GDS.FM.xcarchive/Products/Applications/GDS.FM.app'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0xaf606cd80; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0xaf6b761c0; name='Developer ID Application: noordermeer GmbH (T84UJ8Z67C)', hash='1813E330C68BBA7D35DEBBBCF0E077487E9E2120', serialNumber='481969CD3FC8A9525878E2EF16504937', certificateKinds='(
+    "1.2.840.113635.100.6.1.13"
+), issueDate='2026-01-20 08:24:09 +0000''>', entitlements='{
+    "com.apple.security.app-sandbox" = 1;
+    "com.apple.security.files.user-selected.read-only" = 1;
+    "com.apple.security.network.client" = 1;
+}', teamID='T84UJ8Z67C', identifier='ch.noordermeer.GDS-FM', executablePath='<DVTFilePath:0xaf606ca20:'/Users/jorge/Sites/xcode/GDS.FM/build/GDS.FM.xcarchive/Products/Applications/GDS.FM.app/Contents/MacOS/GDS.FM'>', hardenedRuntime='1'>'>
+2026-01-21 07:58:07 +0000 [MT] Processing step: IDEDistributionInfoPlistStep
+2026-01-21 07:58:07 +0000 [MT] Skipping step: IDEDistributionInfoPlistStep because it said so
+2026-01-21 07:58:07 +0000 [MT] Processing step: IDEDistributionAppThinningPlistStep
+2026-01-21 07:58:07 +0000 [MT] Processing step: IDEDistributionSymbolsStep
+2026-01-21 07:58:07 +0000 [MT] Skipping step: IDEDistributionSymbolsStep because it said so
+2026-01-21 07:58:07 +0000 [MT] Processing step: IDEDistributionAppThinningStep
+2026-01-21 07:58:07 +0000 [MT] Skipping step: IDEDistributionAppThinningStep because it said so
+2026-01-21 07:58:07 +0000 [MT] Processing step: IDEDistributionArchThinningStep
+2026-01-21 07:58:07 +0000 [MT] Archs to thin for item /Users/jorge/Sites/xcode/GDS.FM/build/GDS.FM.xcarchive/Products/Applications/GDS.FM.app are []
+2026-01-21 07:58:07 +0000 [MT] Processing step: IDEDistributionODRStep
+2026-01-21 07:58:07 +0000 [MT] Processing step: IDEDistributionStripXattrsStep
+2026-01-21 07:58:07 +0000 [MT] Skipping stripping extended attributes because the codesign step will strip them.
+2026-01-21 07:58:07 +0000 [MT] Processing step: IDEDistributionCodesignStep
+2026-01-21 07:58:07 +0000 [MT] Entitlements for <IDEDistributionItem: 0xaf606cde0; bundleID='ch.noordermeer.GDS-FM', path='<DVTFilePath:0xaf6bf38a0:'/Users/jorge/Sites/xcode/GDS.FM/build/GDS.FM.xcarchive/Products/Applications/GDS.FM.app'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0xaf606cd80; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0xaf6b761c0; name='Developer ID Application: noordermeer GmbH (T84UJ8Z67C)', hash='1813E330C68BBA7D35DEBBBCF0E077487E9E2120', serialNumber='481969CD3FC8A9525878E2EF16504937', certificateKinds='(
+    "1.2.840.113635.100.6.1.13"
+), issueDate='2026-01-20 08:24:09 +0000''>', entitlements='{
+    "com.apple.security.app-sandbox" = 1;
+    "com.apple.security.files.user-selected.read-only" = 1;
+    "com.apple.security.network.client" = 1;
+}', teamID='T84UJ8Z67C', identifier='ch.noordermeer.GDS-FM', executablePath='<DVTFilePath:0xaf606ca20:'/Users/jorge/Sites/xcode/GDS.FM/build/GDS.FM.xcarchive/Products/Applications/GDS.FM.app/Contents/MacOS/GDS.FM'>', hardenedRuntime='1'>'>: {
+    "com.apple.security.app-sandbox" = 1;
+    "com.apple.security.files.user-selected.read-only" = 1;
+    "com.apple.security.network.client" = 1;
+}
+2026-01-21 07:58:07 +0000 [MT] Associated App Clip Identifiers Filter: Skipping because "com.apple.developer.associated-appclip-app-identifiers" is not present
+2026-01-21 07:58:07 +0000 [MT] Entitlements for <IDEDistributionItem: 0xaf606cde0; bundleID='ch.noordermeer.GDS-FM', path='<DVTFilePath:0xaf6bf38a0:'/Users/jorge/Sites/xcode/GDS.FM/build/GDS.FM.xcarchive/Products/Applications/GDS.FM.app'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0xaf606cd80; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0xaf6b76640; name='Developer ID Application: noordermeer GmbH (T84UJ8Z67C)', hash='1813E330C68BBA7D35DEBBBCF0E077487E9E2120', serialNumber='481969CD3FC8A9525878E2EF16504937', certificateKinds='(
+    "1.2.840.113635.100.6.1.13"
+), issueDate='2026-01-20 08:24:09 +0000''>', entitlements='{
+    "com.apple.security.app-sandbox" = 1;
+    "com.apple.security.files.user-selected.read-only" = 1;
+    "com.apple.security.network.client" = 1;
+}', teamID='T84UJ8Z67C', identifier='ch.noordermeer.GDS-FM', executablePath='<DVTFilePath:0xaf606ca20:'/Users/jorge/Sites/xcode/GDS.FM/build/GDS.FM.xcarchive/Products/Applications/GDS.FM.app/Contents/MacOS/GDS.FM'>', hardenedRuntime='1'>'> are: {
+    "com.apple.security.app-sandbox" = 1;
+    "com.apple.security.files.user-selected.read-only" = 1;
+    "com.apple.security.network.client" = 1;
+}
+2026-01-21 07:58:07 +0000 [MT] Writing entitlements for <IDEDistributionItem: 0xaf606cde0; bundleID='ch.noordermeer.GDS-FM', path='<DVTFilePath:0xaf6bf38a0:'/Users/jorge/Sites/xcode/GDS.FM/build/GDS.FM.xcarchive/Products/Applications/GDS.FM.app'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0xaf606cd80; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0xaf6b76640; name='Developer ID Application: noordermeer GmbH (T84UJ8Z67C)', hash='1813E330C68BBA7D35DEBBBCF0E077487E9E2120', serialNumber='481969CD3FC8A9525878E2EF16504937', certificateKinds='(
+    "1.2.840.113635.100.6.1.13"
+), issueDate='2026-01-20 08:24:09 +0000''>', entitlements='{
+    "com.apple.security.app-sandbox" = 1;
+    "com.apple.security.files.user-selected.read-only" = 1;
+    "com.apple.security.network.client" = 1;
+}', teamID='T84UJ8Z67C', identifier='ch.noordermeer.GDS-FM', executablePath='<DVTFilePath:0xaf606ca20:'/Users/jorge/Sites/xcode/GDS.FM/build/GDS.FM.xcarchive/Products/Applications/GDS.FM.app/Contents/MacOS/GDS.FM'>', hardenedRuntime='1'>'> to: /var/folders/q6/_6xpw3vs3f5fkm0h6vv4jsnw0000gn/T/XcodeDistPipeline.~~~h6R7Kw/entitlements~~~n6BNRu
+2026-01-21 07:58:07 +0000 [MT] invoking codesign: <NSConcreteTask: 0xaf8803c50; launchPath='/usr/bin/codesign', arguments='(
+    "-f",
+    "-s",
+    1813E330C68BBA7D35DEBBBCF0E077487E9E2120,
+    "--entitlements",
+    "/var/folders/q6/_6xpw3vs3f5fkm0h6vv4jsnw0000gn/T/XcodeDistPipeline.~~~h6R7Kw/entitlements~~~n6BNRu",
+    "--requirements",
+    "=designated => anchor apple generic  and identifier \"$self.identifier\" and ((cert leaf[field.1.2.840.113635.100.6.1.9] exists) or ( certificate 1[field.1.2.840.113635.100.6.2.6] exists and certificate leaf[field.1.2.840.113635.100.6.1.13] exists  and certificate leaf[subject.OU] = \"T84UJ8Z67C\" ))",
+    "--preserve-metadata=identifier,flags,runtime,launch-constraints,library-constraints",
+    "--generate-entitlement-der",
+    "--strip-disallowed-xattrs",
+    "-vvv",
+    "/var/folders/q6/_6xpw3vs3f5fkm0h6vv4jsnw0000gn/T/XcodeDistPipeline.~~~h6R7Kw/Root/Applications/GDS.FM.app"
+)'>
+2026-01-21 07:58:08 +0000 [MT] codesign output: /var/folders/q6/_6xpw3vs3f5fkm0h6vv4jsnw0000gn/T/XcodeDistPipeline.~~~h6R7Kw/Root/Applications/GDS.FM.app: replacing existing signature
+/var/folders/q6/_6xpw3vs3f5fkm0h6vv4jsnw0000gn/T/XcodeDistPipeline.~~~h6R7Kw/Root/Applications/GDS.FM.app: signed app bundle with Mach-O universal (x86_64 arm64) [ch.noordermeer.GDS-FM]
+2026-01-21 07:58:08 +0000 [MT] Processing step: IDEDistributionZipODRItemStep
+2026-01-21 07:58:08 +0000 [MT] Skipping step: IDEDistributionZipODRItemStep because it said so
+2026-01-21 07:58:08 +0000 [MT] Processing step: IDEDistributionSkipPackagingStep
+2026-01-21 07:58:08 +0000 [MT] Processing step: IDEDistributionAppStoreInformationStep
+2026-01-21 07:58:08 +0000 [MT] Skipping step: IDEDistributionAppStoreInformationStep because it said so
+2026-01-21 07:58:08 +0000 [MT] Processing step: IDEDistributionGenerateProcessedDistributionItems
+2026-01-21 07:58:08 +0000 [MT] IDEDistributionItem init <DVTFilePath:0xaf5c0c780:'/var/folders/q6/_6xpw3vs3f5fkm0h6vv4jsnw0000gn/T/XcodeDistPipeline.~~~h6R7Kw/Root/Applications/GDS.FM.app'>
+2026-01-21 07:58:08 +0000 [MT] [OPTIONAL] Didn't find embedded provisioning profile for <DVTFilePath:0xaf5c0c780:'/var/folders/q6/_6xpw3vs3f5fkm0h6vv4jsnw0000gn/T/XcodeDistPipeline.~~~h6R7Kw/Root/Applications/GDS.FM.app'>: Error Domain=NSCocoaErrorDomain Code=4 "No file at <DVTFilePath:0xaf88ce220:'/var/folders/q6/_6xpw3vs3f5fkm0h6vv4jsnw0000gn/T/XcodeDistPipeline.~~~h6R7Kw/Root/Applications/GDS.FM.app/Contents/embedded.provisionprofile'>" UserInfo={NSLocalizedDescription=No file at <DVTFilePath:0xaf88ce220:'/var/folders/q6/_6xpw3vs3f5fkm0h6vv4jsnw0000gn/T/XcodeDistPipeline.~~~h6R7Kw/Root/Applications/GDS.FM.app/Contents/embedded.provisionprofile'>}
+2026-01-21 07:58:08 +0000 [MT] Processing step: IDEDistributionCreateManifestStep
+2026-01-21 07:58:08 +0000 [MT] Skipping step: IDEDistributionCreateManifestStep because it said so
