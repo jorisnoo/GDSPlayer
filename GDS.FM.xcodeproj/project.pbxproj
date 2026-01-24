@@ -13,6 +13,7 @@
 /* Begin PBXFileReference section */
 		CF4891A32F1D1DEB002E107B /* GDS.FM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GDS.FM.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF9000642F20C59000D83F6F /* GDSAppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = GDSAppIcon.icon; sourceTree = "<group>"; };
+		CFC1BBD42F20E22600FB0BB0 /* release.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = release.yml; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -40,6 +41,7 @@
 				CF4891A52F1D1DEB002E107B /* GDS.FM */,
 				CF4891A42F1D1DEB002E107B /* Products */,
 				CF9000642F20C59000D83F6F /* GDSAppIcon.icon */,
+				CFC1BBD62F20E22600FB0BB0 /* .github */,
 			);
 			sourceTree = "<group>";
 		};
@@ -49,6 +51,22 @@
 				CF4891A32F1D1DEB002E107B /* GDS.FM.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		CFC1BBD52F20E22600FB0BB0 /* workflows */ = {
+			isa = PBXGroup;
+			children = (
+				CFC1BBD42F20E22600FB0BB0 /* release.yml */,
+			);
+			path = workflows;
+			sourceTree = "<group>";
+		};
+		CFC1BBD62F20E22600FB0BB0 /* .github */ = {
+			isa = PBXGroup;
+			children = (
+				CFC1BBD52F20E22600FB0BB0 /* workflows */,
+			);
+			path = .github;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
