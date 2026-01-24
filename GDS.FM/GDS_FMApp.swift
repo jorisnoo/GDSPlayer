@@ -1,5 +1,10 @@
 import SwiftUI
 
+#if !APP_STORE
+import AppUpdater
+import PromiseKit
+#endif
+
 @main
 struct GDS_FMApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
@@ -20,6 +25,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var rotationIncrement: CGFloat = 0
     private var currentRotatingSymbol: String?
 
+    #if !APP_STORE
+    let updater = AppUpdater(owner: "jorisnoo", repo: "GDS.FM")
+    #endif
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
@@ -37,7 +46,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         buildMenu()
         player.play()
+
+        Analytics.appOpened()
     }
+
+    #if !APP_STORE
+    @objc func checkForUpdates() {
+        updater.check().catch(policy: .allErrors) { error in
+            if error.isCancelled {
+                let alert = NSAlert()
+                alert.messageText = "No Updates Available"
+                alert.informativeText = "You're running the latest version of GDS.FM."
+                alert.alertStyle = .informational
+                alert.addButton(withTitle: "OK")
+                alert.runModal()
+            }
+        }
+    }
+    #endif
 
     @objc private func statusItemClicked(_ sender: NSStatusBarButton) {
         guard let event = NSApp.currentEvent else { return }
@@ -204,6 +230,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(settingsItem)
 
         menu.addItem(.separator())
+
+        #if !APP_STORE
+        let updateItem = NSMenuItem(title: "Check for Updates...", action: #selector(checkForUpdates), keyEquivalent: "")
+        updateItem.target = self
+        menu.addItem(updateItem)
+        #endif
 
         let quitItem = NSMenuItem(title: "Quit", action: #selector(quit), keyEquivalent: "q")
         quitItem.target = self

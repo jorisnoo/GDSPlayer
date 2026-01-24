@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		CF9000652F20C59000D83F6F /* GDSAppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = CF9000642F20C59000D83F6F /* GDSAppIcon.icon */; };
+		CFA000012F24000100000001 /* AviaryInsights in Frameworks */ = {isa = PBXBuildFile; productRef = CFA000022F24000100000001 /* AviaryInsights */; };
+		CFA000032F24000100000002 /* AppUpdater in Frameworks */ = {isa = PBXBuildFile; productRef = CFA000042F24000100000002 /* AppUpdater */; };
+		CFA000052F24000100000003 /* PromiseKit in Frameworks */ = {isa = PBXBuildFile; productRef = CFA000062F24000100000003 /* PromiseKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +32,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFA000012F24000100000001 /* AviaryInsights in Frameworks */,
+				CFA000032F24000100000002 /* AppUpdater in Frameworks */,
+				CFA000052F24000100000003 /* PromiseKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -89,6 +95,9 @@
 			);
 			name = GDS.FM;
 			packageProductDependencies = (
+				CFA000022F24000100000001 /* AviaryInsights */,
+				CFA000042F24000100000002 /* AppUpdater */,
+				CFA000062F24000100000003 /* PromiseKit */,
 			);
 			productName = GDS.FM;
 			productReference = CF4891A32F1D1DEB002E107B /* GDS.FM.app */;
@@ -120,6 +129,11 @@
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CF4891A42F1D1DEB002E107B /* Products */;
+			packageReferences = (
+				CFA000072F24000100000004 /* XCRemoteSwiftPackageReference "AviaryInsights" */,
+				CFA000082F24000100000005 /* XCRemoteSwiftPackageReference "AppUpdater" */,
+				CFA000092F24000100000006 /* XCRemoteSwiftPackageReference "PromiseKit" */,
+			);
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -285,6 +299,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "GDS.FM/Info.plist";
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -319,6 +334,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "GDS.FM/Info.plist";
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -360,6 +376,51 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		CFA000072F24000100000004 /* XCRemoteSwiftPackageReference "AviaryInsights" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/brightdigit/AviaryInsights";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.1;
+			};
+		};
+		CFA000082F24000100000005 /* XCRemoteSwiftPackageReference "AppUpdater" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mxcl/AppUpdater";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.1;
+			};
+		};
+		CFA000092F24000100000006 /* XCRemoteSwiftPackageReference "PromiseKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mxcl/PromiseKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.22.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CFA000022F24000100000001 /* AviaryInsights */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CFA000072F24000100000004 /* XCRemoteSwiftPackageReference "AviaryInsights" */;
+			productName = AviaryInsights;
+		};
+		CFA000042F24000100000002 /* AppUpdater */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CFA000082F24000100000005 /* XCRemoteSwiftPackageReference "AppUpdater" */;
+			productName = AppUpdater;
+		};
+		CFA000062F24000100000003 /* PromiseKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CFA000092F24000100000006 /* XCRemoteSwiftPackageReference "PromiseKit" */;
+			productName = PromiseKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = CF48919B2F1D1DEB002E107B /* Project object */;
 }
