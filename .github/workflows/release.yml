@@ -51,22 +51,21 @@ jobs:
         run: |
           ./scripts/build-release.sh --clean --version "${{ steps.version.outputs.VERSION }}"
 
-      - name: Extract release notes from CHANGELOG
+      - name: Extract release notes
         id: changelog
         run: |
-          VERSION="${{ steps.version.outputs.VERSION }}"
-          awk "/^## .*${VERSION}/,/^## .*[0-9]+\.[0-9]+\.[0-9]+/{if(/^## .*[0-9]+\.[0-9]+\.[0-9]+/ && !/^## .*${VERSION}/)exit; print}" CHANGELOG.md > $RUNNER_TEMP/release_notes.md
+          VERSION="${{ github.ref_name }}"
+          awk "/^## \[${VERSION}\]/{flag=1; next} /^## \[/{flag=0} flag" CHANGELOG.md > release_notes.md
           echo "" >> release_notes.md
           echo "**Full Changelog:** https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md" >> release_notes.md
-          cat $RUNNER_TEMP/release_notes.md
 
       - name: Create GitHub Release
         run: |
-          gh release create "${{ steps.version.outputs.VERSION }}" \
-            "build/GDS.FM-${{ steps.version.outputs.VERSION }}.dmg" \
-            "build/GDS.FM-${{ steps.version.outputs.VERSION }}.zip" \
-            --title "Release ${{ steps.version.outputs.VERSION }}" \
-            --notes-file "$RUNNER_TEMP/release_notes.md"
+          gh release create "${{ github.ref_name }}" \
+            "build/GDS.FM-${{ github.ref_name }}.dmg" \
+            "build/GDS.FM-${{ github.ref_name }}.zip" \
+            --title "Release ${{ github.ref_name }}" \
+            --notes-file release_notes.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
