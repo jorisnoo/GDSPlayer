@@ -20,7 +20,7 @@
 
 ## Requirements
 
-- macOS 13.0+
+- macOS 15+ (Catalina)
 - Xcode 16+
 
 ## Build

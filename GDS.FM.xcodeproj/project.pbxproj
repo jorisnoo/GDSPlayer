@@ -276,7 +276,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.1;
+				MACOSX_DEPLOYMENT_TARGET = 15;
 				PRODUCT_BUNDLE_IDENTIFIER = "ch.noordermeer.GDS-FM";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -311,7 +311,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.1;
+				MACOSX_DEPLOYMENT_TARGET = 15;
 				PRODUCT_BUNDLE_IDENTIFIER = "ch.noordermeer.GDS-FM";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
