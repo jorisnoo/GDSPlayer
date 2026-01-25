@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.1](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.1.1) (2026-01-25)
+
+### Build System
+
+- fix workflow ([59a18e3](https://github.com/jorisnoo/GDSPlayer/commit/59a18e34791bb8959c080f578d4be33eb5a46669))
 ## [0.1.0](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.1.0) (2026-01-25)
 
 ### Features
