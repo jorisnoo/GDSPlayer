@@ -26,5 +26,10 @@ All notable changes to this project will be documented in this file.
 
 ### Build System
 
+- init shipmark ([e366b00](https://github.com/jorisnoo/GDSPlayer/commit/e366b00688b327acffaeefb7e3a7ab5091ac0250))
 - add docs ([b5df831](https://github.com/jorisnoo/GDSPlayer/commit/b5df831a9b9a3da96b853703fb58a062c0947404))
 - add build script ([2f1f65b](https://github.com/jorisnoo/GDSPlayer/commit/2f1f65beb943f6b8c325fee7ad8ff64841324ae5))
+
+### Chores
+
+- **release:** 0.1.0 ([88e40a1](https://github.com/jorisnoo/GDSPlayer/commit/88e40a1aaf197590aa4f3e89ceff5831703a6727))
