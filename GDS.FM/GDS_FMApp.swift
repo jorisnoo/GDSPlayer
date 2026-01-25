@@ -26,7 +26,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var currentRotatingSymbol: String?
 
     #if !APP_STORE
-    let updater = AppUpdater(owner: "jorisnoo", repo: "GDS.FM")
+    let updater: AppUpdater? = {
+        guard let owner = Bundle.main.object(forInfoDictionaryKey: "GitHubOwner") as? String,
+              let repo = Bundle.main.object(forInfoDictionaryKey: "GitHubRepo") as? String else {
+            return nil
+        }
+        return AppUpdater(owner: owner, repo: repo)
+    }()
     #endif
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -52,16 +58,30 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     #if !APP_STORE
     @objc func checkForUpdates() {
-        updater.check().catch(policy: .allErrors) { error in
-            if error.isCancelled {
+        guard let updater else { return }
+        updater.check()
+            .done { _ in
                 let alert = NSAlert()
-                alert.messageText = "No Updates Available"
-                alert.informativeText = "You're running the latest version of GDS.FM."
+                alert.messageText = "Update Available"
+                alert.informativeText = "A new version is being downloaded and will be installed."
                 alert.alertStyle = .informational
                 alert.addButton(withTitle: "OK")
                 alert.runModal()
             }
-        }
+            .catch(policy: .allErrors) { error in
+                let alert = NSAlert()
+                if error.isCancelled {
+                    alert.messageText = "No Updates Available"
+                    alert.informativeText = "You're running the latest version of GDS.FM."
+                    alert.alertStyle = .informational
+                } else {
+                    alert.messageText = "Update Check Failed"
+                    alert.informativeText = "Could not check for updates. Please try again later."
+                    alert.alertStyle = .warning
+                }
+                alert.addButton(withTitle: "OK")
+                alert.runModal()
+            }
     }
     #endif
 

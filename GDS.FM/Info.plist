@@ -6,5 +6,9 @@
 	<true/>
 	<key>AnalyticsServerURL</key>
 	<string>https://noordermeer.ch/api</string>
+	<key>GitHubOwner</key>
+	<string>jorisnoo</string>
+	<key>GitHubRepo</key>
+	<string>GDSPlayer</string>
 </dict>
 </plist>
