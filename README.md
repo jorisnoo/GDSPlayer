@@ -1,13 +1,18 @@
-# GDS.FM
+<p align="center">
+  <img src="assets/logo.png" alt="GDS.FM" width="128" height="128">
+</p>
 
-A minimal macOS menubar app for streaming [GDS.FM](https://gds.fm) radio.
+<h1 align="center">GDS.FM</h1>
 
-## Features
+<p align="center">
+  A minimal macOS menubar app for streaming <a href="https://gds.fm">GDS.FM</a> radio.
+</p>
 
-- **Left-click** to play/pause
-- **Right-click** to open menu with current track info
-- Autoplay on launch
-- Shows current show name and track (artist — title)
+<p align="center">
+  <a href="https://github.com/jorisnoo/GDSPlayer/releases/latest">Download Latest Release</a>
+</p>
+
+---
 
 ## Requirements
 
