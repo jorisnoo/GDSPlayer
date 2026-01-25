@@ -1,9 +1,25 @@
 #!/bin/bash
 set -euo pipefail
 
-# Standalone notarization helper for GDS.FM
+# Standalone notarization helper
 # Use this to retry notarization when build-release.sh fails at notarization
 # or when you need to notarize individual artifacts.
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Load project config
+CONFIG_FILE="$PROJECT_ROOT/.build-config"
+
+if [[ -f "$CONFIG_FILE" ]]; then
+    source "$CONFIG_FILE"
+else
+    echo "Error: .build-config not found. Copy .build-config.example and configure."
+    exit 1
+fi
+
+# Set defaults from config
+NOTARY_PROFILE="${NOTARY_PROFILE:-$APP_NAME}"
 
 # Colors for output
 RED='\033[0;31m'
@@ -12,7 +28,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Default notary profile for local builds (used when APPLE_ID is not set)
-DEFAULT_NOTARY_PROFILE="GDS.FM"
+DEFAULT_NOTARY_PROFILE="$NOTARY_PROFILE"
 
 print_usage() {
     cat << EOF
@@ -30,19 +46,19 @@ Environment Variables:
 
 Examples:
     # With keychain profile:
-    NOTARY_PROFILE="GDS.FM" ./scripts/notarize.sh build/*.dmg
+    NOTARY_PROFILE="$NOTARY_PROFILE" ./scripts/notarize.sh build/*.dmg
 
     # With env vars:
     APPLE_ID="..." APPLE_APP_PASSWORD="..." APPLE_TEAM_ID="..." \\
     ./scripts/notarize.sh build/*.dmg
 
     # Multiple files:
-    NOTARY_PROFILE="GDS.FM" ./scripts/notarize.sh \\
-        build/GDS.FM-1.0.0.zip \\
-        build/GDS.FM-1.0.0.dmg
+    NOTARY_PROFILE="$NOTARY_PROFILE" ./scripts/notarize.sh \\
+        build/$APP_NAME-1.0.0.zip \\
+        build/$APP_NAME-1.0.0.dmg
 
 One-time setup for keychain profile:
-    xcrun notarytool store-credentials "GDS.FM" \\
+    xcrun notarytool store-credentials "$NOTARY_PROFILE" \\
         --apple-id "your@email.com" \\
         --team-id "YOUR_TEAM_ID" \\
         --password "xxxx-xxxx-xxxx-xxxx"

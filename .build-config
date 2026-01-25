@@ -1,0 +1,6 @@
+# .build-config - Project build configuration
+
+APP_NAME="GDS.FM"
+XCODE_PROJECT="GDS.FM.xcodeproj"  # Optional: auto-detects *.xcodeproj if not set
+XCODE_SCHEME="GDS.FM"             # Optional: defaults to APP_NAME
+NOTARY_PROFILE="GDS.FM"           # Optional: defaults to APP_NAME

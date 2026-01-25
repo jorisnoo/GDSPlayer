@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-# Build, sign, and optionally notarize GDS.FM
+# Build, sign, and optionally notarize a macOS app
 # This script is the single source of truth for the build process.
 # Both local builds and GitHub Actions use this script.
 
@@ -9,8 +9,34 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 BUILD_DIR="$PROJECT_ROOT/build"
 
+# Load project config
+CONFIG_FILE="$PROJECT_ROOT/.build-config"
+
+if [[ -f "$CONFIG_FILE" ]]; then
+    source "$CONFIG_FILE"
+else
+    echo "Error: .build-config not found. Copy .build-config.example and configure."
+    exit 1
+fi
+
+# Auto-detect if not specified
+XCODE_PROJECT="${XCODE_PROJECT:-$(ls -d "$PROJECT_ROOT"/*.xcodeproj 2>/dev/null | head -1 | xargs basename 2>/dev/null || echo "")}"
+XCODE_SCHEME="${XCODE_SCHEME:-$APP_NAME}"
+NOTARY_PROFILE="${NOTARY_PROFILE:-$APP_NAME}"
+
+# Validate required config
+if [[ -z "$APP_NAME" ]]; then
+    echo "Error: APP_NAME not set in .build-config"
+    exit 1
+fi
+
+if [[ -z "$XCODE_PROJECT" ]]; then
+    echo "Error: XCODE_PROJECT not set and could not auto-detect *.xcodeproj"
+    exit 1
+fi
+
 # Default values
-BUILD_ONLY=false
+BUILD_ONLY=true
 CLEAN=false
 VERSION=""
 
@@ -21,16 +47,16 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Default notary profile for local builds (used when APPLE_ID is not set)
-DEFAULT_NOTARY_PROFILE="GDS.FM"
+DEFAULT_NOTARY_PROFILE="$NOTARY_PROFILE"
 
 print_usage() {
     cat << EOF
 Usage: $(basename "$0") [OPTIONS]
 
-Build, sign, and optionally notarize GDS.FM.
+Build, sign, and optionally notarize $APP_NAME.
 
 Options:
-    --build-only    Build, sign, and package without notarization
+    --notarize      Build, sign, package AND notarize (default: skip notarization)
     --clean         Remove build artifacts before building
     --version X.Y.Z Override version (default: from git tag)
     --help          Show this help message
@@ -47,23 +73,23 @@ Environment Variables (for notarization):
     MACOS_CERTIFICATE_NAME  Certificate identity (default: "Developer ID Application")
 
 Examples:
-    # Build only (no notarization)
-    ./scripts/build-release.sh --build-only
+    # Build only (no notarization) - this is the default
+    ./scripts/build-release.sh
 
-    # Full build with keychain profile (recommended for local)
-    NOTARY_PROFILE="GDS.FM" ./scripts/build-release.sh
+    # Full build with notarization using keychain profile
+    NOTARY_PROFILE="$NOTARY_PROFILE" ./scripts/build-release.sh --notarize
 
-    # Full build with env vars (same as CI)
+    # Full build with notarization using env vars (same as CI)
     APPLE_ID="dev@example.com" \\
     APPLE_APP_PASSWORD="xxxx-xxxx" \\
     APPLE_TEAM_ID="T84UJ8Z67C" \\
-    ./scripts/build-release.sh
+    ./scripts/build-release.sh --notarize
 
-    # Clean build with version override (used by CI)
-    ./scripts/build-release.sh --clean --version 1.0.0
+    # Clean build with version override and notarization (used by CI)
+    ./scripts/build-release.sh --clean --notarize --version 1.0.0
 
 One-time setup for keychain profile:
-    xcrun notarytool store-credentials "GDS.FM" \\
+    xcrun notarytool store-credentials "$NOTARY_PROFILE" \\
         --apple-id "your@email.com" \\
         --team-id "YOUR_TEAM_ID" \\
         --password "xxxx-xxxx-xxxx-xxxx"
@@ -163,10 +189,10 @@ build_archive() {
     fi
 
     xcodebuild archive \
-        -project "$PROJECT_ROOT/GDS.FM.xcodeproj" \
-        -scheme GDS.FM \
+        -project "$PROJECT_ROOT/$XCODE_PROJECT" \
+        -scheme "$XCODE_SCHEME" \
         -configuration Release \
-        -archivePath "$BUILD_DIR/GDS.FM.xcarchive" \
+        -archivePath "$BUILD_DIR/$APP_NAME.xcarchive" \
         CODE_SIGN_STYLE=Manual \
         CODE_SIGN_IDENTITY="$cert_name" \
         DEVELOPMENT_TEAM="$team_id" \
@@ -204,7 +230,7 @@ export_app() {
 EOF
 
     xcodebuild -exportArchive \
-        -archivePath "$BUILD_DIR/GDS.FM.xcarchive" \
+        -archivePath "$BUILD_DIR/$APP_NAME.xcarchive" \
         -exportOptionsPlist "$BUILD_DIR/ExportOptions.plist" \
         -exportPath "$BUILD_DIR/export"
 
@@ -213,19 +239,19 @@ EOF
 
 create_zip() {
     local version="$1"
-    local zip_path="$BUILD_DIR/GDS.FM-$version.zip"
+    local zip_path="$BUILD_DIR/$APP_NAME-$version.zip"
 
     log_info "Creating ZIP archive..."
 
     cd "$BUILD_DIR/export"
-    ditto -c -k --keepParent "GDS.FM.app" "$zip_path"
+    ditto -c -k --keepParent "$APP_NAME.app" "$zip_path"
 
     log_info "ZIP created: $zip_path"
 }
 
 create_dmg() {
     local version="$1"
-    local dmg_path="$BUILD_DIR/GDS.FM-$version.dmg"
+    local dmg_path="$BUILD_DIR/$APP_NAME-$version.dmg"
 
     log_info "Creating DMG..."
 
@@ -233,22 +259,22 @@ create_dmg() {
     rm -f "$dmg_path"
 
     create-dmg \
-        --volname "GDS.FM" \
+        --volname "$APP_NAME" \
         --window-pos 200 120 \
         --window-size 600 400 \
         --icon-size 100 \
-        --icon "GDS.FM.app" 150 185 \
+        --icon "$APP_NAME.app" 150 185 \
         --app-drop-link 450 185 \
-        --hide-extension "GDS.FM.app" \
+        --hide-extension "$APP_NAME.app" \
         "$dmg_path" \
-        "$BUILD_DIR/export/GDS.FM.app"
+        "$BUILD_DIR/export/$APP_NAME.app"
 
     log_info "DMG created: $dmg_path"
 }
 
 sign_dmg() {
     local version="$1"
-    local dmg_path="$BUILD_DIR/GDS.FM-$version.dmg"
+    local dmg_path="$BUILD_DIR/$APP_NAME-$version.dmg"
     local cert_name="${MACOS_CERTIFICATE_NAME:-Developer ID Application}"
 
     log_info "Signing DMG..."
@@ -279,13 +305,13 @@ notarize_file() {
 
 staple_app() {
     log_info "Stapling notarization ticket to app..."
-    xcrun stapler staple "$BUILD_DIR/export/GDS.FM.app"
+    xcrun stapler staple "$BUILD_DIR/export/$APP_NAME.app"
     log_info "App stapled successfully."
 }
 
 staple_dmg() {
     local version="$1"
-    local dmg_path="$BUILD_DIR/GDS.FM-$version.dmg"
+    local dmg_path="$BUILD_DIR/$APP_NAME-$version.dmg"
 
     log_info "Stapling notarization ticket to DMG..."
     xcrun stapler staple "$dmg_path"
@@ -294,7 +320,7 @@ staple_dmg() {
 
 verify_notarization() {
     local version="$1"
-    local dmg_path="$BUILD_DIR/GDS.FM-$version.dmg"
+    local dmg_path="$BUILD_DIR/$APP_NAME-$version.dmg"
 
     log_info "Verifying notarization..."
     spctl -a -vvv -t install "$dmg_path"
@@ -309,14 +335,15 @@ print_summary() {
     echo "========================================"
     echo "Build Summary"
     echo "========================================"
+    echo "App:          $APP_NAME"
     echo "Version:      $version"
     echo "Build Dir:    $BUILD_DIR"
     echo ""
     echo "Artifacts:"
-    echo "  - $BUILD_DIR/GDS.FM.xcarchive/"
-    echo "  - $BUILD_DIR/export/GDS.FM.app"
-    echo "  - $BUILD_DIR/GDS.FM-$version.zip"
-    echo "  - $BUILD_DIR/GDS.FM-$version.dmg"
+    echo "  - $BUILD_DIR/$APP_NAME.xcarchive/"
+    echo "  - $BUILD_DIR/export/$APP_NAME.app"
+    echo "  - $BUILD_DIR/$APP_NAME-$version.zip"
+    echo "  - $BUILD_DIR/$APP_NAME-$version.dmg"
     echo ""
     if [ "$notarized" = "true" ]; then
         echo "Status: Notarized and stapled"
@@ -329,8 +356,8 @@ print_summary() {
 # Parse arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
-        --build-only)
-            BUILD_ONLY=true
+        --notarize)
+            BUILD_ONLY=false
             shift
             ;;
         --clean)
@@ -355,7 +382,7 @@ done
 
 # Main execution
 main() {
-    log_info "Starting GDS.FM build process..."
+    log_info "Starting $APP_NAME build process..."
 
     # Check prerequisites
     check_prerequisites
@@ -390,14 +417,14 @@ main() {
     # Notarize if not build-only
     if [ "$BUILD_ONLY" = false ]; then
         # Notarize ZIP
-        notarize_file "$BUILD_DIR/GDS.FM-$version.zip"
+        notarize_file "$BUILD_DIR/$APP_NAME-$version.zip"
 
         # Staple app
         staple_app
 
         # Recreate ZIP with stapled app
         log_info "Recreating ZIP with stapled app..."
-        rm "$BUILD_DIR/GDS.FM-$version.zip"
+        rm "$BUILD_DIR/$APP_NAME-$version.zip"
         create_zip "$version"
 
         # Create DMG with stapled app
@@ -407,7 +434,7 @@ main() {
         sign_dmg "$version"
 
         # Notarize DMG
-        notarize_file "$BUILD_DIR/GDS.FM-$version.dmg"
+        notarize_file "$BUILD_DIR/$APP_NAME-$version.dmg"
 
         # Staple DMG
         staple_dmg "$version"
