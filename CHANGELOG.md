@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.4](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.1.4) (2026-01-25)
+
+### Bug Fixes
+
+- app icon in github release ([9feef35](https://github.com/jorisnoo/GDSPlayer/commit/9feef359a7fa4effa722e6f68584f0034c84e37d))
+
+### Build System
+
+- lower requirements ([d3d860a](https://github.com/jorisnoo/GDSPlayer/commit/d3d860a39980aed7b23fd499cb57e6c133b4a89d))
+- update build scripts ([b84b036](https://github.com/jorisnoo/GDSPlayer/commit/b84b036ecbe09f53ba3f98bef7f3dc530bc14419))
 ## [0.1.3](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.1.3) (2026-01-25)
 
 ### Features
