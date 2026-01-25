@@ -3,8 +3,8 @@
 <plist version="1.0">
 <dict>
 	<key>AnalyticsEnabled</key>
-	<false/>
+	<true/>
 	<key>AnalyticsServerURL</key>
-	<string>https://noordermeer.ch</string>
+	<string>https://noordermeer.ch/api</string>
 </dict>
 </plist>
