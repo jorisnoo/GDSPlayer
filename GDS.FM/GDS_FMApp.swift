@@ -269,7 +269,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func openWebsite() {
-        NSWorkspace.shared.open(URL(string: "https://gds.fm")!)
+        let url = "https://gds.fm"
+        Analytics.outboundLinkClick(url: url)
+        NSWorkspace.shared.open(URL(string: url)!)
     }
 
     @objc private func quit() {
@@ -282,6 +284,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
               let track = info["track"] else {
             return
         }
+
+        Analytics.trackClick(
+            artist: artist,
+            trackName: track,
+            service: PreferencesManager.shared.selectedMusicService.displayName
+        )
 
         MusicSearchService.openSearch(
             artist: artist,

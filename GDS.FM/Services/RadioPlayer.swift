@@ -134,6 +134,7 @@ final class RadioPlayer {
         timeControlStatusObserver = nil
         state = .stopped
         onStateChange?()
+        Analytics.playbackStopped()
 
         let nowPlayingCenter = MPNowPlayingInfoCenter.default()
         nowPlayingCenter.playbackState = .stopped
@@ -149,6 +150,7 @@ final class RadioPlayer {
                 case .playing:
                     self.state = .playing
                     self.onStateChange?()
+                    Analytics.playbackStarted()
                 case .waitingToPlayAtSpecifiedRate:
                     self.state = .loading
                     self.onStateChange?()
