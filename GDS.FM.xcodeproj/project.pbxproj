@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF1A4B212F25C28E00B95871 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = CF1A4B202F25C28E00B95871 /* AppIcon.icon */; };
 		CF9000652F20C59000D83F6F /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = CF9000642F20C59000D83F6F /* AppIcon.icon */; };
 		CFA000012F24000100000001 /* AviaryInsights in Frameworks */ = {isa = PBXBuildFile; productRef = CFA000022F24000100000001 /* AviaryInsights */; };
 		CFA000032F24000100000002 /* AppUpdater in Frameworks */ = {isa = PBXBuildFile; productRef = CFA000042F24000100000002 /* AppUpdater */; };
@@ -14,7 +15,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		CF1A4AC72F25B0EC00B95871 /* GDS.FM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = GDS.FM.app; path = /Users/jorge/Sites/xcode/GDS.FM/build/Debug/GDS.FM.app; sourceTree = "<absolute>"; };
+		CF1A4B0A2F25C28300B95871 /* GDS.FM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GDS.FM.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF1A4B202F25C28E00B95871 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		CF9000642F20C59000D83F6F /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -45,6 +47,8 @@
 			children = (
 				CF4891A52F1D1DEB002E107B /* GDS.FM */,
 				CF9000642F20C59000D83F6F /* AppIcon.icon */,
+				CF1A4B0A2F25C28300B95871 /* GDS.FM.app */,
+				CF1A4B202F25C28E00B95871 /* AppIcon.icon */,
 			);
 			sourceTree = "<group>";
 		};
@@ -73,7 +77,7 @@
 				CFA000062F24000100000003 /* PromiseKit */,
 			);
 			productName = GDS.FM;
-			productReference = CF1A4AC72F25B0EC00B95871 /* GDS.FM.app */;
+			productReference = CF1A4B0A2F25C28300B95871 /* GDS.FM.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -120,6 +124,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF1A4B212F25C28E00B95871 /* AppIcon.icon in Resources */,
 				CF9000652F20C59000D83F6F /* AppIcon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
