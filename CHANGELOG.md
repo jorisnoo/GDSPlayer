@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.3](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.1.3) (2026-01-25)
+
+### Features
+
+- update plausible ([368bec0](https://github.com/jorisnoo/GDSPlayer/commit/368bec048d0539a96101760071cc4d6b01c5b9f1))
+
+### Bug Fixes
+
+- app icon ([1bddde9](https://github.com/jorisnoo/GDSPlayer/commit/1bddde9e746e8c9666fa271eabfe00886f76dd1c))
+
+### Build System
+
+- fix autoupdater path ([6b2f9fd](https://github.com/jorisnoo/GDSPlayer/commit/6b2f9fd0ff17e571c785e9730aa46f75fe8d8d17))
+- fix cachgelog extraction in release ([f475c66](https://github.com/jorisnoo/GDSPlayer/commit/f475c665233e5cb4674e276d1eb896387608c1ac))
 ## [0.1.2](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.1.2) (2026-01-25)
 
 ### Build System
