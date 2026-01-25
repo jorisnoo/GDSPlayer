@@ -12,6 +12,10 @@
   <a href="https://github.com/jorisnoo/GDSPlayer/releases/latest">Download Latest Release</a>
 </p>
 
+<p align="center">
+  <img src="assets/screenshot.png" alt="GDS.FM Screenshot">
+</p>
+
 ---
 
 ## Requirements
