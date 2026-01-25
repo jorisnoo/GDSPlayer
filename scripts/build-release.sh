@@ -32,7 +32,7 @@ Build, sign, and optionally notarize GDS.FM.
 Options:
     --build-only    Build, sign, and package without notarization
     --clean         Remove build artifacts before building
-    --version X.Y.Z Override version (default: read from version.yml)
+    --version X.Y.Z Override version (default: from git tag)
     --help          Show this help message
 
 Environment Variables (for notarization):
@@ -127,13 +127,16 @@ get_version() {
         return
     fi
 
-    local version_file="$PROJECT_ROOT/version.yml"
-    if [ ! -f "$version_file" ]; then
-        log_error "version.yml not found and no --version specified"
-        exit 1
+    # Use git describe for version from tags
+    local git_version
+    git_version=$(git describe --tags --abbrev=0 2>/dev/null || true)
+    if [ -n "$git_version" ]; then
+        echo "$git_version"
+        return
     fi
 
-    grep -E '^version:' "$version_file" | sed 's/version:[[:space:]]*//'
+    log_error "No version found. Use --version or create a git tag"
+    exit 1
 }
 
 clean_build() {
@@ -143,6 +146,7 @@ clean_build() {
 }
 
 build_archive() {
+    local version="$1"
     local team_id="${APPLE_TEAM_ID:-}"
     local cert_name="${MACOS_CERTIFICATE_NAME:-Developer ID Application}"
 
@@ -165,7 +169,8 @@ build_archive() {
         -archivePath "$BUILD_DIR/GDS.FM.xcarchive" \
         CODE_SIGN_STYLE=Manual \
         CODE_SIGN_IDENTITY="$cert_name" \
-        DEVELOPMENT_TEAM="$team_id"
+        DEVELOPMENT_TEAM="$team_id" \
+        MARKETING_VERSION="$version"
 
     log_info "Archive created successfully."
 }
@@ -239,6 +244,16 @@ create_dmg() {
         "$BUILD_DIR/export/GDS.FM.app"
 
     log_info "DMG created: $dmg_path"
+}
+
+sign_dmg() {
+    local version="$1"
+    local dmg_path="$BUILD_DIR/GDS.FM-$version.dmg"
+    local cert_name="${MACOS_CERTIFICATE_NAME:-Developer ID Application}"
+
+    log_info "Signing DMG..."
+    codesign --force --sign "$cert_name" "$dmg_path"
+    log_info "DMG signed successfully."
 }
 
 notarize_file() {
@@ -364,16 +379,13 @@ main() {
     mkdir -p "$BUILD_DIR"
 
     # Build and archive
-    build_archive
+    build_archive "$version"
 
     # Export app
     export_app
 
     # Create ZIP
     create_zip "$version"
-
-    # Create DMG
-    create_dmg "$version"
 
     # Notarize if not build-only
     if [ "$BUILD_ONLY" = false ]; then
@@ -388,17 +400,28 @@ main() {
         rm "$BUILD_DIR/GDS.FM-$version.zip"
         create_zip "$version"
 
+        # Create DMG with stapled app
+        create_dmg "$version"
+
+        # Sign the DMG
+        sign_dmg "$version"
+
         # Notarize DMG
         notarize_file "$BUILD_DIR/GDS.FM-$version.dmg"
 
         # Staple DMG
         staple_dmg "$version"
 
+        # Re-sign DMG after stapling (stapling modifies the file)
+        sign_dmg "$version"
+
         # Verify
         verify_notarization "$version"
 
         print_summary "$version" "true"
     else
+        # For build-only, create DMG without signing/notarization
+        create_dmg "$version"
         print_summary "$version" "false"
     fi
 
