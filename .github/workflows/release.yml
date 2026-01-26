@@ -1,4 +1,4 @@
-name: Build, Sign, Notarize and Release
+name: Build, Sign, Notarise and Release
 
 on:
   push:
@@ -48,14 +48,14 @@ jobs:
       - name: Install create-dmg
         run: brew install create-dmg
 
-      - name: Build, sign, and notarize
+      - name: Build, sign, and notarise
         env:
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           MACOS_CERTIFICATE_NAME: ${{ secrets.MACOS_CERTIFICATE_NAME }}
         run: |
-          ./scripts/build-release.sh --clean --notarize --version "${{ steps.version.outputs.VERSION }}"
+          ./scripts/build-release.sh --clean --notarise --version "${{ steps.version.outputs.VERSION }}"
 
       - name: Extract release notes
         id: changelog

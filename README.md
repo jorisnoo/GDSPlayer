@@ -5,7 +5,7 @@
 <h1 align="center">GDS.FM</h1>
 
 <p align="center">
-  A minimal macOS menubar app for streaming <a href="https://gds.fm">GDS.FM</a> radio.
+  A macOS menubar app for streaming <a href="https://gds.fm">GDS.FM</a> radio.
 </p>
 
 <p align="center">
@@ -28,7 +28,7 @@
 1. Open `GDS.FM.xcodeproj` in Xcode
 2. Build and run (⌘R)
 
-For release builds, notarization, and CI/CD setup, see [docs/BUILD.md](docs/BUILD.md).
+For release builds, notarisation, and CI/CD setup, see [docs/BUILD.md](docs/BUILD.md).
 
 ## License
 

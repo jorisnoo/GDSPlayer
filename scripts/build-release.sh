@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-# Build, sign, and optionally notarize a macOS app
+# Build, sign, and optionally notarise a macOS app
 # This script is the single source of truth for the build process.
 # Both local builds and GitHub Actions use this script.
 
@@ -40,19 +40,19 @@ print_usage() {
     cat << EOF
 Usage: $(basename "$0") [OPTIONS]
 
-Build, sign, and optionally notarize $APP_NAME.
+Build, sign, and optionally notarise $APP_NAME.
 
 Options:
-    --notarize      Build, sign, package AND notarize (default: skip notarization)
+    --notarise      Build, sign, package AND notarise (default: skip notarisation)
     --clean         Remove build artifacts before building
     --version X.Y.Z Override version (default: from git tag)
     --help          Show this help message
 
-Environment Variables (for notarization):
+Environment Variables (for notarisation):
     NOTARY_PROFILE      Keychain profile name (recommended for local builds)
 
     Or use these three together:
-    APPLE_ID            Apple ID email for notarization
+    APPLE_ID            Apple ID email for notarisation
     APPLE_APP_PASSWORD  App-specific password
     APPLE_TEAM_ID       Developer Team ID
 
@@ -60,20 +60,20 @@ Environment Variables (for notarization):
     MACOS_CERTIFICATE_NAME  Certificate identity (default: "Developer ID Application")
 
 Examples:
-    # Build only (no notarization) - this is the default
+    # Build only (no notarisation) - this is the default
     ./scripts/build-release.sh
 
-    # Full build with notarization using keychain profile
-    NOTARY_PROFILE="$NOTARY_PROFILE" ./scripts/build-release.sh --notarize
+    # Full build with notarisation using keychain profile
+    NOTARY_PROFILE="$NOTARY_PROFILE" ./scripts/build-release.sh --notarise
 
-    # Full build with notarization using env vars (same as CI)
+    # Full build with notarisation using env vars (same as CI)
     APPLE_ID="dev@example.com" \\
     APPLE_APP_PASSWORD="xxxx-xxxx" \\
     APPLE_TEAM_ID="T84UJ8Z67C" \\
-    ./scripts/build-release.sh --notarize
+    ./scripts/build-release.sh --notarise
 
-    # Clean build with version override and notarization (used by CI)
-    ./scripts/build-release.sh --clean --notarize --version 1.0.0
+    # Clean build with version override and notarisation (used by CI)
+    ./scripts/build-release.sh --clean --notarise --version 1.0.0
 
 One-time setup for keychain profile:
     xcrun notarytool store-credentials "$NOTARY_PROFILE" \\
@@ -121,10 +121,10 @@ check_prerequisites() {
     log_info "All prerequisites satisfied."
 }
 
-check_notarization_credentials() {
+check_notarisation_credentials() {
     # Prefer explicit Apple ID credentials (used by CI)
     if [ -n "${APPLE_ID:-}" ] && [ -n "${APPLE_APP_PASSWORD:-}" ] && [ -n "${APPLE_TEAM_ID:-}" ]; then
-        log_info "Using Apple ID credentials for notarization"
+        log_info "Using Apple ID credentials for notarisation"
         return 0
     fi
 
@@ -269,10 +269,10 @@ sign_dmg() {
     log_info "DMG signed successfully."
 }
 
-notarize_file() {
+notarise_file() {
     local file_path="$1"
 
-    log_info "Notarizing: $file_path"
+    log_info "Notarising: $file_path"
 
     # Prefer explicit Apple ID credentials (used by CI)
     if [ -n "${APPLE_ID:-}" ] && [ -n "${APPLE_APP_PASSWORD:-}" ] && [ -n "${APPLE_TEAM_ID:-}" ]; then
@@ -287,11 +287,11 @@ notarize_file() {
             --wait
     fi
 
-    log_info "Notarization complete for: $file_path"
+    log_info "Notarisation complete for: $file_path"
 }
 
 staple_app() {
-    log_info "Stapling notarization ticket to app..."
+    log_info "Stapling notarisation ticket to app..."
     xcrun stapler staple "$BUILD_DIR/export/$APP_NAME.app"
     log_info "App stapled successfully."
 }
@@ -300,23 +300,23 @@ staple_dmg() {
     local version="$1"
     local dmg_path="$BUILD_DIR/$APP_NAME-$version.dmg"
 
-    log_info "Stapling notarization ticket to DMG..."
+    log_info "Stapling notarisation ticket to DMG..."
     xcrun stapler staple "$dmg_path"
     log_info "DMG stapled successfully."
 }
 
-verify_notarization() {
+verify_notarisation() {
     local version="$1"
     local dmg_path="$BUILD_DIR/$APP_NAME-$version.dmg"
 
-    log_info "Verifying notarization..."
+    log_info "Verifying notarisation..."
     spctl -a -vvv -t install "$dmg_path"
-    log_info "Notarization verified successfully."
+    log_info "Notarisation verified successfully."
 }
 
 print_summary() {
     local version="$1"
-    local notarized="$2"
+    local notarised="$2"
 
     echo ""
     echo "========================================"
@@ -332,10 +332,10 @@ print_summary() {
     echo "  - $BUILD_DIR/$APP_NAME-$version.zip"
     echo "  - $BUILD_DIR/$APP_NAME-$version.dmg"
     echo ""
-    if [ "$notarized" = "true" ]; then
-        echo "Status: Notarized and stapled"
+    if [ "$notarised" = "true" ]; then
+        echo "Status: Notarised and stapled"
     else
-        echo "Status: Built and signed (not notarized)"
+        echo "Status: Built and signed (not notarised)"
     fi
     echo "========================================"
 }
@@ -343,7 +343,7 @@ print_summary() {
 # Parse arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
-        --notarize)
+        --notarise)
             BUILD_ONLY=false
             shift
             ;;
@@ -374,9 +374,9 @@ main() {
     # Check prerequisites
     check_prerequisites
 
-    # Check notarization credentials if needed
+    # Check notarisation credentials if needed
     if [ "$BUILD_ONLY" = false ]; then
-        check_notarization_credentials
+        check_notarisation_credentials
     fi
 
     # Get version
@@ -401,10 +401,10 @@ main() {
     # Create ZIP
     create_zip "$version"
 
-    # Notarize if not build-only
+    # Notarise if not build-only
     if [ "$BUILD_ONLY" = false ]; then
-        # Notarize ZIP
-        notarize_file "$BUILD_DIR/$APP_NAME-$version.zip"
+        # Notarise ZIP
+        notarise_file "$BUILD_DIR/$APP_NAME-$version.zip"
 
         # Staple app
         staple_app
@@ -420,8 +420,8 @@ main() {
         # Sign the DMG
         sign_dmg "$version"
 
-        # Notarize DMG
-        notarize_file "$BUILD_DIR/$APP_NAME-$version.dmg"
+        # Notarise DMG
+        notarise_file "$BUILD_DIR/$APP_NAME-$version.dmg"
 
         # Staple DMG
         staple_dmg "$version"
@@ -430,11 +430,11 @@ main() {
         sign_dmg "$version"
 
         # Verify
-        verify_notarization "$version"
+        verify_notarisation "$version"
 
         print_summary "$version" "true"
     else
-        # For build-only, create DMG without signing/notarization
+        # For build-only, create DMG without signing/notarisation
         create_dmg "$version"
         print_summary "$version" "false"
     fi

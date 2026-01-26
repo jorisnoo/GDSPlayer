@@ -1,9 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
-# Standalone notarization helper
-# Use this to retry notarization when build-release.sh fails at notarization
-# or when you need to notarize individual artifacts.
+# Standalone notarisation helper
+# Use this to retry notarisation when build-release.sh fails at notarisation
+# or when you need to notarise individual artifacts.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -33,26 +33,26 @@ print_usage() {
     cat << EOF
 Usage: $(basename "$0") FILE [FILE...]
 
-Notarize one or more files (ZIP or DMG) with Apple.
+Notarise one or more files (ZIP or DMG) with Apple.
 
 Environment Variables:
     NOTARY_PROFILE      Keychain profile name (recommended for local builds)
 
     Or use these three together:
-    APPLE_ID            Apple ID email for notarization
+    APPLE_ID            Apple ID email for notarisation
     APPLE_APP_PASSWORD  App-specific password
     APPLE_TEAM_ID       Developer Team ID
 
 Examples:
     # With keychain profile:
-    NOTARY_PROFILE="$NOTARY_PROFILE" ./scripts/notarize.sh build/*.dmg
+    NOTARY_PROFILE="$NOTARY_PROFILE" ./scripts/notarise.sh build/*.dmg
 
     # With env vars:
     APPLE_ID="..." APPLE_APP_PASSWORD="..." APPLE_TEAM_ID="..." \\
-    ./scripts/notarize.sh build/*.dmg
+    ./scripts/notarise.sh build/*.dmg
 
     # Multiple files:
-    NOTARY_PROFILE="$NOTARY_PROFILE" ./scripts/notarize.sh \\
+    NOTARY_PROFILE="$NOTARY_PROFILE" ./scripts/notarise.sh \\
         build/$APP_NAME-1.0.0.zip \\
         build/$APP_NAME-1.0.0.dmg
 
@@ -79,7 +79,7 @@ log_error() {
 check_credentials() {
     # Prefer explicit Apple ID credentials (used by CI)
     if [ -n "${APPLE_ID:-}" ] && [ -n "${APPLE_APP_PASSWORD:-}" ] && [ -n "${APPLE_TEAM_ID:-}" ]; then
-        log_info "Using Apple ID credentials for notarization"
+        log_info "Using Apple ID credentials for notarisation"
         return 0
     fi
 
@@ -89,7 +89,7 @@ check_credentials() {
     return 0
 }
 
-notarize_file() {
+notarise_file() {
     local file_path="$1"
 
     if [ ! -f "$file_path" ]; then
@@ -97,7 +97,7 @@ notarize_file() {
         return 1
     fi
 
-    log_info "Submitting for notarization: $file_path"
+    log_info "Submitting for notarisation: $file_path"
 
     # Prefer explicit Apple ID credentials (used by CI)
     if [ -n "${APPLE_ID:-}" ] && [ -n "${APPLE_APP_PASSWORD:-}" ] && [ -n "${APPLE_TEAM_ID:-}" ]; then
@@ -112,13 +112,13 @@ notarize_file() {
             --wait
     fi
 
-    log_info "Notarization complete for: $file_path"
+    log_info "Notarisation complete for: $file_path"
 }
 
 staple_file() {
     local file_path="$1"
 
-    log_info "Stapling notarization ticket to: $file_path"
+    log_info "Stapling notarisation ticket to: $file_path"
     xcrun stapler staple "$file_path"
     log_info "Stapled successfully: $file_path"
 }
@@ -127,7 +127,7 @@ verify_file() {
     local file_path="$1"
     local extension="${file_path##*.}"
 
-    log_info "Verifying notarization: $file_path"
+    log_info "Verifying notarisation: $file_path"
 
     if [ "$extension" = "dmg" ]; then
         spctl -a -vvv -t install "$file_path"
@@ -171,17 +171,17 @@ main() {
         echo "Processing: $file"
         echo "========================================"
 
-        if notarize_file "$file"; then
+        if notarise_file "$file"; then
             staple_file "$file"
             if verify_file "$file"; then
-                log_info "Successfully notarized and verified: $file"
+                log_info "Successfully notarised and verified: $file"
                 ((success_count++))
             else
                 log_error "Verification failed: $file"
                 ((fail_count++))
             fi
         else
-            log_error "Notarization failed: $file"
+            log_error "Notarisation failed: $file"
             ((fail_count++))
         fi
     done
