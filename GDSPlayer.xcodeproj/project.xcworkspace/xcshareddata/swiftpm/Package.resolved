@@ -1,15 +1,6 @@
 {
-  "originHash" : "7aff70bfb8f68fbb863d66a8bdcf8b4ff2ab2561e14fe95efeb5be798582ceab",
+  "originHash" : "47937ad437e6a0c5c0ac523b8610d752b5d33e8474f87cfc3728063793a598a9",
   "pins" : [
-    {
-      "identity" : "appupdater",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mxcl/AppUpdater",
-      "state" : {
-        "revision" : "1b60169700489f16cfbe2feb6b1e32ca5c9464b8",
-        "version" : "1.1.1"
-      }
-    },
     {
       "identity" : "aviaryinsights",
       "kind" : "remoteSourceControl",

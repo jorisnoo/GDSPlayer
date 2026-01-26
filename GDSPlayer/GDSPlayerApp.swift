@@ -1,7 +1,6 @@
 import SwiftUI
 
 #if !APP_STORE
-import AppUpdater
 import PromiseKit
 #endif
 

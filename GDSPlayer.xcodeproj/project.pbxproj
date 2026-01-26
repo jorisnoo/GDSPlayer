@@ -10,8 +10,10 @@
 		CF1A4B212F25C28E00B95871 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = CF1A4B202F25C28E00B95871 /* AppIcon.icon */; };
 		CF9000652F20C59000D83F6F /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = CF9000642F20C59000D83F6F /* AppIcon.icon */; };
 		CFA000012F24000100000001 /* AviaryInsights in Frameworks */ = {isa = PBXBuildFile; productRef = CFA000022F24000100000001 /* AviaryInsights */; };
-		CFA000032F24000100000002 /* AppUpdater in Frameworks */ = {isa = PBXBuildFile; productRef = CFA000042F24000100000002 /* AppUpdater */; };
 		CFA000052F24000100000003 /* PromiseKit in Frameworks */ = {isa = PBXBuildFile; productRef = CFA000062F24000100000003 /* PromiseKit */; };
+		CFA000102F2400010000000D /* PMKFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = CFA0000D2F2400010000000A /* PMKFoundation */; };
+		CFA000112F2400010000000E /* Path in Frameworks */ = {isa = PBXBuildFile; productRef = CFA0000E2F2400010000000B /* Path */; };
+		CFA000122F2400010000000F /* Version in Frameworks */ = {isa = PBXBuildFile; productRef = CFA0000F2F2400010000000C /* Version */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,8 +35,10 @@
 			isa = PBXFrameworksBuildPhase;
 			files = (
 				CFA000012F24000100000001 /* AviaryInsights in Frameworks */,
-				CFA000032F24000100000002 /* AppUpdater in Frameworks */,
 				CFA000052F24000100000003 /* PromiseKit in Frameworks */,
+				CFA000102F2400010000000D /* PMKFoundation in Frameworks */,
+				CFA000112F2400010000000E /* Path in Frameworks */,
+				CFA000122F2400010000000F /* Version in Frameworks */,
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -69,8 +73,10 @@
 			name = GDSPlayer;
 			packageProductDependencies = (
 				CFA000022F24000100000001 /* AviaryInsights */,
-				CFA000042F24000100000002 /* AppUpdater */,
 				CFA000062F24000100000003 /* PromiseKit */,
+				CFA0000D2F2400010000000A /* PMKFoundation */,
+				CFA0000E2F2400010000000B /* Path */,
+				CFA0000F2F2400010000000C /* Version */,
 			);
 			productName = GDSPlayer;
 			productReference = CF1A4B0A2F25C28300B95871 /* GDS.FM.app */;
@@ -102,8 +108,10 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				CFA000072F24000100000004 /* XCRemoteSwiftPackageReference "AviaryInsights" */,
-				CFA000082F24000100000005 /* XCRemoteSwiftPackageReference "AppUpdater" */,
 				CFA000092F24000100000006 /* XCRemoteSwiftPackageReference "PromiseKit" */,
+				CFA0000A2F24000100000007 /* XCRemoteSwiftPackageReference "PMKFoundation" */,
+				CFA0000B2F24000100000008 /* XCRemoteSwiftPackageReference "Path.swift" */,
+				CFA0000C2F24000100000009 /* XCRemoteSwiftPackageReference "Version" */,
 			);
 			preferredProjectObjectVersion = 90;
 			productRefGroup = CF48919A2F1D1DEB002E107B;
@@ -263,7 +271,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				MARKETING_VERSION = 0.1.7;
 				DEVELOPMENT_TEAM = T84UJ8Z67C;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -278,8 +285,9 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15;
-				PRODUCT_BUNDLE_IDENTIFIER = "ch.noordermeer.GDSPlayer";
-				PRODUCT_NAME = "GDS.FM";
+				MARKETING_VERSION = 0.1.7;
+				PRODUCT_BUNDLE_IDENTIFIER = ch.noordermeer.GDSPlayer;
+				PRODUCT_NAME = GDS.FM;
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -299,7 +307,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				MARKETING_VERSION = 0.1.7;
 				DEVELOPMENT_TEAM = T84UJ8Z67C;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -314,8 +321,9 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15;
-				PRODUCT_BUNDLE_IDENTIFIER = "ch.noordermeer.GDSPlayer";
-				PRODUCT_NAME = "GDS.FM";
+				MARKETING_VERSION = 0.1.7;
+				PRODUCT_BUNDLE_IDENTIFIER = ch.noordermeer.GDSPlayer;
+				PRODUCT_NAME = GDS.FM;
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -356,20 +364,36 @@
 				minimumVersion = 1.0.1;
 			};
 		};
-		CFA000082F24000100000005 /* XCRemoteSwiftPackageReference "AppUpdater" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/mxcl/AppUpdater";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.1;
-			};
-		};
 		CFA000092F24000100000006 /* XCRemoteSwiftPackageReference "PromiseKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/mxcl/PromiseKit";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 6.22.1;
+			};
+		};
+		CFA0000A2F24000100000007 /* XCRemoteSwiftPackageReference "PMKFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/PromiseKit/Foundation";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.4.0;
+			};
+		};
+		CFA0000B2F24000100000008 /* XCRemoteSwiftPackageReference "Path.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mxcl/Path.swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.4.1;
+			};
+		};
+		CFA0000C2F24000100000009 /* XCRemoteSwiftPackageReference "Version" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mxcl/Version";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -380,15 +404,25 @@
 			package = CFA000072F24000100000004 /* XCRemoteSwiftPackageReference "AviaryInsights" */;
 			productName = AviaryInsights;
 		};
-		CFA000042F24000100000002 /* AppUpdater */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CFA000082F24000100000005 /* XCRemoteSwiftPackageReference "AppUpdater" */;
-			productName = AppUpdater;
-		};
 		CFA000062F24000100000003 /* PromiseKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CFA000092F24000100000006 /* XCRemoteSwiftPackageReference "PromiseKit" */;
 			productName = PromiseKit;
+		};
+		CFA0000D2F2400010000000A /* PMKFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CFA0000A2F24000100000007 /* XCRemoteSwiftPackageReference "PMKFoundation" */;
+			productName = PMKFoundation;
+		};
+		CFA0000E2F2400010000000B /* Path */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CFA0000B2F24000100000008 /* XCRemoteSwiftPackageReference "Path.swift" */;
+			productName = Path;
+		};
+		CFA0000F2F2400010000000C /* Version */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CFA0000C2F24000100000009 /* XCRemoteSwiftPackageReference "Version" */;
+			productName = Version;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
