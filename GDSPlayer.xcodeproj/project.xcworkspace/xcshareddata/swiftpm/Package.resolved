@@ -1,6 +1,15 @@
 {
-  "originHash" : "47937ad437e6a0c5c0ac523b8610d752b5d33e8474f87cfc3728063793a598a9",
+  "originHash" : "8569d3a046c0179ba1137206bd8842e861fe81ebfa6f693a42f76350cc091862",
   "pins" : [
+    {
+      "identity" : "appupdater",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jorisnoo/AppUpdater",
+      "state" : {
+        "branch" : "develop",
+        "revision" : "50c49f20bd7e80268e49a742cc173e66b7d75ca6"
+      }
+    },
     {
       "identity" : "aviaryinsights",
       "kind" : "remoteSourceControl",

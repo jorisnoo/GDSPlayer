@@ -7,19 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CF1A4B212F25C28E00B95871 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = CF1A4B202F25C28E00B95871 /* AppIcon.icon */; };
-		CF9000652F20C59000D83F6F /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = CF9000642F20C59000D83F6F /* AppIcon.icon */; };
 		CFA000012F24000100000001 /* AviaryInsights in Frameworks */ = {isa = PBXBuildFile; productRef = CFA000022F24000100000001 /* AviaryInsights */; };
 		CFA000052F24000100000003 /* PromiseKit in Frameworks */ = {isa = PBXBuildFile; productRef = CFA000062F24000100000003 /* PromiseKit */; };
 		CFA000102F2400010000000D /* PMKFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = CFA0000D2F2400010000000A /* PMKFoundation */; };
 		CFA000112F2400010000000E /* Path in Frameworks */ = {isa = PBXBuildFile; productRef = CFA0000E2F2400010000000B /* Path */; };
 		CFA000122F2400010000000F /* Version in Frameworks */ = {isa = PBXBuildFile; productRef = CFA0000F2F2400010000000C /* Version */; };
+		CF0000152F24000100000012 /* AppUpdater in Frameworks */ = {isa = PBXBuildFile; productRef = CF0000142F24000100000011 /* AppUpdater */; };
+		CFE702E32F275FEB00C579E9 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = CFE702E22F275FEB00C579E9 /* AppIcon.icon */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		CF1A4B0A2F25C28300B95871 /* GDS.FM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GDS.FM.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		CF1A4B202F25C28E00B95871 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
-		CF9000642F20C59000D83F6F /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
+		CFE702E22F275FEB00C579E9 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -39,6 +38,7 @@
 				CFA000102F2400010000000D /* PMKFoundation in Frameworks */,
 				CFA000112F2400010000000E /* Path in Frameworks */,
 				CFA000122F2400010000000F /* Version in Frameworks */,
+				CF0000152F24000100000012 /* AppUpdater in Frameworks */,
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -48,9 +48,8 @@
 			isa = PBXGroup;
 			children = (
 				CF4891A52F1D1DEB002E107B /* GDSPlayer */,
-				CF9000642F20C59000D83F6F /* AppIcon.icon */,
 				CF1A4B0A2F25C28300B95871 /* GDS.FM.app */,
-				CF1A4B202F25C28E00B95871 /* AppIcon.icon */,
+				CFE702E22F275FEB00C579E9 /* AppIcon.icon */,
 			);
 			sourceTree = "<group>";
 		};
@@ -77,6 +76,7 @@
 				CFA0000D2F2400010000000A /* PMKFoundation */,
 				CFA0000E2F2400010000000B /* Path */,
 				CFA0000F2F2400010000000C /* Version */,
+				CF0000142F24000100000011 /* AppUpdater */,
 			);
 			productName = GDSPlayer;
 			productReference = CF1A4B0A2F25C28300B95871 /* GDS.FM.app */;
@@ -109,9 +109,10 @@
 			packageReferences = (
 				CFA000072F24000100000004 /* XCRemoteSwiftPackageReference "AviaryInsights" */,
 				CFA000092F24000100000006 /* XCRemoteSwiftPackageReference "PromiseKit" */,
-				CFA0000A2F24000100000007 /* XCRemoteSwiftPackageReference "PMKFoundation" */,
-				CFA0000B2F24000100000008 /* XCRemoteSwiftPackageReference "Path.swift" */,
+				CFA0000A2F24000100000007 /* XCRemoteSwiftPackageReference "Foundation" */,
+				CFA0000B2F24000100000008 /* XCRemoteSwiftPackageReference "Path" */,
 				CFA0000C2F24000100000009 /* XCRemoteSwiftPackageReference "Version" */,
+				CF0000132F24000100000010 /* XCRemoteSwiftPackageReference "AppUpdater" */,
 			);
 			preferredProjectObjectVersion = 90;
 			productRefGroup = CF48919A2F1D1DEB002E107B;
@@ -127,8 +128,7 @@
 		CF4891A12F1D1DEB002E107B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
-				CF1A4B212F25C28E00B95871 /* AppIcon.icon in Resources */,
-				CF9000652F20C59000D83F6F /* AppIcon.icon in Resources */,
+				CFE702E32F275FEB00C579E9 /* AppIcon.icon in Resources */,
 			);
 		};
 /* End PBXResourcesBuildPhase section */
@@ -285,7 +285,6 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15;
-				MARKETING_VERSION = 0.1.7;
 				PRODUCT_BUNDLE_IDENTIFIER = ch.noordermeer.GDSPlayer;
 				PRODUCT_NAME = GDS.FM;
 				REGISTER_APP_GROUPS = YES;
@@ -321,7 +320,6 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15;
-				MARKETING_VERSION = 0.1.7;
 				PRODUCT_BUNDLE_IDENTIFIER = ch.noordermeer.GDSPlayer;
 				PRODUCT_NAME = GDS.FM;
 				REGISTER_APP_GROUPS = YES;
@@ -372,7 +370,7 @@
 				minimumVersion = 6.22.1;
 			};
 		};
-		CFA0000A2F24000100000007 /* XCRemoteSwiftPackageReference "PMKFoundation" */ = {
+		CFA0000A2F24000100000007 /* XCRemoteSwiftPackageReference "Foundation" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/PromiseKit/Foundation";
 			requirement = {
@@ -380,7 +378,7 @@
 				minimumVersion = 3.4.0;
 			};
 		};
-		CFA0000B2F24000100000008 /* XCRemoteSwiftPackageReference "Path.swift" */ = {
+		CFA0000B2F24000100000008 /* XCRemoteSwiftPackageReference "Path" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/mxcl/Path.swift";
 			requirement = {
@@ -394,6 +392,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.2.0;
+			};
+		};
+		CF0000132F24000100000010 /* XCRemoteSwiftPackageReference "AppUpdater" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jorisnoo/AppUpdater";
+			requirement = {
+				branch = develop;
+				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -411,18 +417,23 @@
 		};
 		CFA0000D2F2400010000000A /* PMKFoundation */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CFA0000A2F24000100000007 /* XCRemoteSwiftPackageReference "PMKFoundation" */;
+			package = CFA0000A2F24000100000007 /* XCRemoteSwiftPackageReference "Foundation" */;
 			productName = PMKFoundation;
 		};
 		CFA0000E2F2400010000000B /* Path */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CFA0000B2F24000100000008 /* XCRemoteSwiftPackageReference "Path.swift" */;
+			package = CFA0000B2F24000100000008 /* XCRemoteSwiftPackageReference "Path" */;
 			productName = Path;
 		};
 		CFA0000F2F2400010000000C /* Version */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CFA0000C2F24000100000009 /* XCRemoteSwiftPackageReference "Version" */;
 			productName = Version;
+		};
+		CF0000142F24000100000011 /* AppUpdater */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CF0000132F24000100000010 /* XCRemoteSwiftPackageReference "AppUpdater" */;
+			productName = AppUpdater;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

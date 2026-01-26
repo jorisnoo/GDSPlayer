@@ -2,6 +2,7 @@ import SwiftUI
 
 #if !APP_STORE
 import PromiseKit
+import AppUpdater
 #endif
 
 import os.log
