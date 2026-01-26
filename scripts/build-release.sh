@@ -15,6 +15,9 @@ if [[ -z "$REPO_NAME" ]]; then
     REPO_NAME="GDSPlayer"  # Fallback to known repo name
 fi
 
+# AppUpdater expects lowercase asset names (e.g., gdsplayer-X.Y.Z.zip)
+REPO_NAME_LOWER=$(echo "$REPO_NAME" | tr '[:upper:]' '[:lower:]')
+
 # Auto-detect Xcode project
 XCODE_PROJECT=$(ls -d "$PROJECT_ROOT"/*.xcodeproj 2>/dev/null | head -1 | xargs basename 2>/dev/null || echo "")
 
@@ -240,7 +243,7 @@ EOF
 
 create_zip() {
     local version="$1"
-    local zip_path="$BUILD_DIR/$REPO_NAME-$version.zip"
+    local zip_path="$BUILD_DIR/$REPO_NAME_LOWER-$version.zip"
 
     log_info "Creating ZIP archive..."
 
@@ -252,7 +255,7 @@ create_zip() {
 
 create_dmg() {
     local version="$1"
-    local dmg_path="$BUILD_DIR/$REPO_NAME-$version.dmg"
+    local dmg_path="$BUILD_DIR/$REPO_NAME_LOWER-$version.dmg"
 
     log_info "Creating DMG..."
 
@@ -275,7 +278,7 @@ create_dmg() {
 
 sign_dmg() {
     local version="$1"
-    local dmg_path="$BUILD_DIR/$REPO_NAME-$version.dmg"
+    local dmg_path="$BUILD_DIR/$REPO_NAME_LOWER-$version.dmg"
     local cert_name="${MACOS_CERTIFICATE_NAME:-Developer ID Application}"
 
     log_info "Signing DMG..."
@@ -312,7 +315,7 @@ staple_app() {
 
 staple_dmg() {
     local version="$1"
-    local dmg_path="$BUILD_DIR/$REPO_NAME-$version.dmg"
+    local dmg_path="$BUILD_DIR/$REPO_NAME_LOWER-$version.dmg"
 
     log_info "Stapling notarisation ticket to DMG..."
     xcrun stapler staple "$dmg_path"
@@ -321,7 +324,7 @@ staple_dmg() {
 
 verify_notarisation() {
     local version="$1"
-    local dmg_path="$BUILD_DIR/$REPO_NAME-$version.dmg"
+    local dmg_path="$BUILD_DIR/$REPO_NAME_LOWER-$version.dmg"
 
     log_info "Verifying notarisation..."
     spctl -a -vvv -t install "$dmg_path"
@@ -343,8 +346,8 @@ print_summary() {
     echo "Artifacts:"
     echo "  - $BUILD_DIR/$XCODE_SCHEME.xcarchive/"
     echo "  - $BUILD_DIR/export/$APP_NAME.app"
-    echo "  - $BUILD_DIR/$REPO_NAME-$version.zip"
-    echo "  - $BUILD_DIR/$REPO_NAME-$version.dmg"
+    echo "  - $BUILD_DIR/$REPO_NAME_LOWER-$version.zip"
+    echo "  - $BUILD_DIR/$REPO_NAME_LOWER-$version.dmg"
     echo ""
     if [ "$notarised" = "true" ]; then
         echo "Status: Notarised and stapled"
@@ -418,14 +421,14 @@ main() {
     # Notarise if not build-only
     if [ "$BUILD_ONLY" = false ]; then
         # Notarise ZIP
-        notarise_file "$BUILD_DIR/$REPO_NAME-$version.zip"
+        notarise_file "$BUILD_DIR/$REPO_NAME_LOWER-$version.zip"
 
         # Staple app
         staple_app
 
         # Recreate ZIP with stapled app
         log_info "Recreating ZIP with stapled app..."
-        rm "$BUILD_DIR/$REPO_NAME-$version.zip"
+        rm "$BUILD_DIR/$REPO_NAME_LOWER-$version.zip"
         create_zip "$version"
 
         # Create DMG with stapled app
@@ -435,7 +438,7 @@ main() {
         sign_dmg "$version"
 
         # Notarise DMG
-        notarise_file "$BUILD_DIR/$REPO_NAME-$version.dmg"
+        notarise_file "$BUILD_DIR/$REPO_NAME_LOWER-$version.dmg"
 
         # Staple DMG
         staple_dmg "$version"

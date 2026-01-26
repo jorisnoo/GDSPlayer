@@ -5,6 +5,12 @@ import AppUpdater
 import PromiseKit
 #endif
 
+import os.log
+
+extension Logger {
+    static let appUpdater = Logger(subsystem: "com.gds.fm", category: "AppUpdater")
+}
+
 @main
 struct GDSPlayerApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
@@ -58,9 +64,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     #if !APP_STORE
     @objc func checkForUpdates() {
-        guard let updater else { return }
+        guard let updater else {
+            Logger.appUpdater.warning("⚠️ AppUpdater not initialized - check Info.plist for GitHubOwner and GitHubRepo")
+            return
+        }
+
+        // Debug logging
+        Logger.appUpdater.info("🔍 Starting update check")
+
         updater.check()
             .done { _ in
+                Logger.appUpdater.info("✅ Update available - starting download")
                 let alert = NSAlert()
                 alert.messageText = "Update Available"
                 alert.informativeText = "A new version is being downloaded and will be installed."
@@ -69,8 +83,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 alert.runModal()
             }
             .catch(policy: .allErrors) { error in
+                // Log error details for debugging
+                Logger.appUpdater.error("❌ Update check error: \(error.localizedDescription)")
+                Logger.appUpdater.error("   Error type: \(String(describing: type(of: error)))")
+                if let pmkError = error as? PMKError {
+                    Logger.appUpdater.error("   PMKError details: \(String(describing: pmkError))")
+                }
+
                 let alert = NSAlert()
                 if error.isCancelled {
+                    Logger.appUpdater.info("ℹ️ No updates available (current version is latest)")
                     alert.messageText = "No Updates Available"
                     alert.informativeText = "You're running the latest version of GDS.FM."
                     alert.alertStyle = .informational
