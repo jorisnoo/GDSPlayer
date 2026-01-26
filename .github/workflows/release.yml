@@ -60,9 +60,24 @@ jobs:
         id: changelog
         run: |
           VERSION="${{ github.ref_name }}"
-          awk "/^## \[${VERSION}\]/{flag=1; next} /^## \[/{flag=0} flag" CHANGELOG.md > release_notes.md
+          REPO="${{ github.repository }}"
+
+          # Create user-friendly download section
+          cat > release_notes.md << EOF
+          ## Download
+
+          **[⬇️ GDS.FM-${VERSION}.dmg](https://github.com/${REPO}/releases/download/${VERSION}/GDS.FM-${VERSION}.dmg)** – Double-click and drag to Applications
+
+          ---
+
+          ## What's Changed
+
+          EOF
+
+          # Append changelog
+          awk "/^## \[${VERSION}\]/{flag=1; next} /^## \[/{flag=0} flag" CHANGELOG.md >> release_notes.md
           echo "" >> release_notes.md
-          echo "**Full Changelog:** https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md" >> release_notes.md
+          echo "**Full Changelog:** https://github.com/${REPO}/blob/main/CHANGELOG.md" >> release_notes.md
 
       - name: Create GitHub Release
         run: |
