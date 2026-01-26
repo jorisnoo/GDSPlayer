@@ -139,7 +139,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
-        if deferredUpdate.loadBundle() == nil {
+        if !deferredUpdate.isValid {
             Logger.appUpdater.info("Deferred update bundle not found at \(deferredUpdate.bundlePath), clearing")
             clearDeferredUpdate()
         }
