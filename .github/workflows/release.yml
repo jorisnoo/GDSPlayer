@@ -20,9 +20,10 @@ jobs:
         id: version
         run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
-      - name: Load build config
+      - name: Extract app name from Xcode project
         run: |
-          source .build-config
+          XCODE_PROJECT=$(ls -d *.xcodeproj | head -1)
+          APP_NAME="${XCODE_PROJECT%.xcodeproj}"
           echo "APP_NAME=$APP_NAME" >> $GITHUB_ENV
 
       - name: Import code signing certificate

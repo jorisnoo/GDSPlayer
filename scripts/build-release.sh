@@ -9,31 +9,18 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 BUILD_DIR="$PROJECT_ROOT/build"
 
-# Load project config
-CONFIG_FILE="$PROJECT_ROOT/.build-config"
-
-if [[ -f "$CONFIG_FILE" ]]; then
-    source "$CONFIG_FILE"
-else
-    echo "Error: .build-config not found. Copy .build-config.example and configure."
-    exit 1
-fi
-
-# Auto-detect if not specified
-XCODE_PROJECT="${XCODE_PROJECT:-$(ls -d "$PROJECT_ROOT"/*.xcodeproj 2>/dev/null | head -1 | xargs basename 2>/dev/null || echo "")}"
-XCODE_SCHEME="${XCODE_SCHEME:-$APP_NAME}"
-NOTARY_PROFILE="${NOTARY_PROFILE:-$APP_NAME}"
-
-# Validate required config
-if [[ -z "$APP_NAME" ]]; then
-    echo "Error: APP_NAME not set in .build-config"
-    exit 1
-fi
+# Auto-detect Xcode project
+XCODE_PROJECT=$(ls -d "$PROJECT_ROOT"/*.xcodeproj 2>/dev/null | head -1 | xargs basename 2>/dev/null || echo "")
 
 if [[ -z "$XCODE_PROJECT" ]]; then
-    echo "Error: XCODE_PROJECT not set and could not auto-detect *.xcodeproj"
+    echo "Error: Could not find *.xcodeproj in project root"
     exit 1
 fi
+
+# Extract app name from Xcode project (remove .xcodeproj extension)
+APP_NAME="${XCODE_PROJECT%.xcodeproj}"
+XCODE_SCHEME="$APP_NAME"
+NOTARY_PROFILE="$APP_NAME"
 
 # Default values
 BUILD_ONLY=true

@@ -8,17 +8,16 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-# Load project config
-CONFIG_FILE="$PROJECT_ROOT/.build-config"
+# Auto-detect Xcode project
+XCODE_PROJECT=$(ls -d "$PROJECT_ROOT"/*.xcodeproj 2>/dev/null | head -1 | xargs basename 2>/dev/null || echo "")
 
-if [[ -f "$CONFIG_FILE" ]]; then
-    source "$CONFIG_FILE"
-else
-    echo "Error: .build-config not found. Copy .build-config.example and configure."
+if [[ -z "$XCODE_PROJECT" ]]; then
+    echo "Error: Could not find *.xcodeproj in project root"
     exit 1
 fi
 
-# Set defaults from config
+# Extract app name from Xcode project
+APP_NAME="${XCODE_PROJECT%.xcodeproj}"
 NOTARY_PROFILE="${NOTARY_PROFILE:-$APP_NAME}"
 
 # Colors for output
