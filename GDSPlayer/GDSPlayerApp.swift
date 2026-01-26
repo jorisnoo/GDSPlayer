@@ -92,20 +92,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
 
-        // Setup install callbacks
-        updater.onInstallSuccess = {
-            Task { @MainActor in
-                Logger.appUpdater.info("✅ Update installed successfully - restart app to apply")
-
-                let alert = NSAlert()
-                alert.messageText = "Update Installed"
-                alert.informativeText = "Restart GDS.FM to use the new version."
-                alert.alertStyle = .informational
-                alert.addButton(withTitle: "OK")
-                alert.runModal()
-            }
-        }
-
         updater.onInstallFail = { error in
             Task { @MainActor in
                 Logger.appUpdater.error("❌ Installation failed: \(error)")
@@ -186,9 +172,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         Logger.appUpdater.info("Installing update from source: \(source)")
+        // installThrowing replaces bundle and relaunches - doesn't return on success
         try await updater.installThrowing(bundle)
-        // Note: installThrowing calls NSApp.terminate(self) on success
-        clearDeferredUpdate()
     }
     #endif
 
