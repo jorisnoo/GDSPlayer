@@ -164,9 +164,15 @@ struct UpdateLogWindow: View {
                         .padding(.vertical, 4)
 
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Update is ready to install. The app will restart to complete the installation.")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                        if PreferencesManager.shared.deferredUpdate != nil {
+                            Text("⏱️ Update is scheduled to install when you quit the app.")
+                                .font(.caption)
+                                .foregroundColor(.orange)
+                        } else {
+                            Text("Update is ready to install. The app will restart to complete the installation.")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
 
                         Button {
                             installUpdate(bundle)

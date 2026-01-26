@@ -7,7 +7,7 @@
       "location" : "https://github.com/jorisnoo/AppUpdater",
       "state" : {
         "branch" : "develop",
-        "revision" : "8b5eb9623aaa1659ef3c35065a99a7a50a46ce23"
+        "revision" : "7a7280cd74235b8949329b98062a2623efad74bc"
       }
     },
     {
@@ -17,15 +17,6 @@
       "state" : {
         "revision" : "2de9697acd3c0f86e54b190f151d745361c31f15",
         "version" : "1.0.1"
-      }
-    },
-    {
-      "identity" : "path.swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mxcl/Path.swift",
-      "state" : {
-        "revision" : "8e355c28e9393c42e58b18c54cace2c42c98a616",
-        "version" : "1.4.1"
       }
     },
     {

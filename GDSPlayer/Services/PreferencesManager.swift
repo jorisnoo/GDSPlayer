@@ -1,11 +1,16 @@
 import Foundation
 
+#if !APP_STORE
+import AppUpdater
+#endif
+
 @MainActor
 final class PreferencesManager {
     static let shared = PreferencesManager()
 
     private let musicServiceKey = "selectedMusicService"
     private let showVinylIconKey = "showVinylIcon"
+    private let deferredUpdateKey = "deferredUpdate"
 
     private init() {}
 
@@ -35,4 +40,24 @@ final class PreferencesManager {
             UserDefaults.standard.set(newValue, forKey: showVinylIconKey)
         }
     }
+
+    #if !APP_STORE
+    var deferredUpdate: DeferredUpdate? {
+        get {
+            guard let data = UserDefaults.standard.data(forKey: deferredUpdateKey),
+                  let update = try? JSONDecoder().decode(DeferredUpdate.self, from: data) else {
+                return nil
+            }
+            return update
+        }
+        set {
+            if let update = newValue,
+               let data = try? JSONEncoder().encode(update) {
+                UserDefaults.standard.set(data, forKey: deferredUpdateKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: deferredUpdateKey)
+            }
+        }
+    }
+    #endif
 }
