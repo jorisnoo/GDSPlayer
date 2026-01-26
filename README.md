@@ -25,7 +25,7 @@
 
 ## Build
 
-1. Open `GDS.FM.xcodeproj` in Xcode
+1. Open `GDSPlayer.xcodeproj` in Xcode
 2. Build and run (⌘R)
 
 For release builds, notarisation, and CI/CD setup, see [docs/BUILD.md](docs/BUILD.md).

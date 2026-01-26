@@ -64,12 +64,12 @@ APPLE_TEAM_ID="YOUR_TEAM_ID" \
 
 After a successful build, artifacts are placed in `build/`:
 
-| Artifact                  | Description                     |
-|---------------------------|---------------------------------|
-| `build/GDS.FM.xcarchive/` | Xcode archive                   |
-| `build/export/GDS.FM.app` | Signed application              |
-| `build/GDS.FM-X.Y.Z.zip`  | ZIP archive for Sparkle updates |
-| `build/GDS.FM-X.Y.Z.dmg`  | DMG for distribution            |
+| Artifact                      | Description                     |
+|-------------------------------|---------------------------------|
+| `build/GDSPlayer.xcarchive/`  | Xcode archive                   |
+| `build/export/GDS.FM.app`     | Signed application              |
+| `build/GDS.FM-X.Y.Z.zip`      | ZIP archive for Sparkle updates |
+| `build/GDS.FM-X.Y.Z.dmg`      | DMG for distribution            |
 
 ## Retrying Notarisation
 

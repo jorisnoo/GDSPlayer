@@ -17,10 +17,18 @@ if [[ -z "$XCODE_PROJECT" ]]; then
     exit 1
 fi
 
-# Extract app name from Xcode project (remove .xcodeproj extension)
-APP_NAME="${XCODE_PROJECT%.xcodeproj}"
-XCODE_SCHEME="$APP_NAME"
-NOTARY_PROFILE="$APP_NAME"
+# Extract scheme name from Xcode project (remove .xcodeproj extension)
+XCODE_SCHEME="${XCODE_PROJECT%.xcodeproj}"
+NOTARY_PROFILE="$XCODE_SCHEME"
+
+# Get the actual product name from Xcode build settings
+# This may differ from the scheme name (e.g., scheme "GDSPlayer" produces "GDS.FM.app")
+APP_NAME=$(xcodebuild -project "$PROJECT_ROOT/$XCODE_PROJECT" -scheme "$XCODE_SCHEME" -showBuildSettings 2>/dev/null | grep "PRODUCT_NAME =" | head -1 | sed 's/.*= //' | xargs)
+
+if [[ -z "$APP_NAME" ]]; then
+    echo "Warning: Could not determine PRODUCT_NAME, falling back to scheme name"
+    APP_NAME="$XCODE_SCHEME"
+fi
 
 # Default values
 BUILD_ONLY=true
@@ -179,7 +187,7 @@ build_archive() {
         -project "$PROJECT_ROOT/$XCODE_PROJECT" \
         -scheme "$XCODE_SCHEME" \
         -configuration Release \
-        -archivePath "$BUILD_DIR/$APP_NAME.xcarchive" \
+        -archivePath "$BUILD_DIR/$XCODE_SCHEME.xcarchive" \
         CODE_SIGN_STYLE=Manual \
         CODE_SIGN_IDENTITY="$cert_name" \
         DEVELOPMENT_TEAM="$team_id" \
@@ -217,7 +225,7 @@ export_app() {
 EOF
 
     xcodebuild -exportArchive \
-        -archivePath "$BUILD_DIR/$APP_NAME.xcarchive" \
+        -archivePath "$BUILD_DIR/$XCODE_SCHEME.xcarchive" \
         -exportOptionsPlist "$BUILD_DIR/ExportOptions.plist" \
         -exportPath "$BUILD_DIR/export"
 
@@ -327,7 +335,7 @@ print_summary() {
     echo "Build Dir:    $BUILD_DIR"
     echo ""
     echo "Artifacts:"
-    echo "  - $BUILD_DIR/$APP_NAME.xcarchive/"
+    echo "  - $BUILD_DIR/$XCODE_SCHEME.xcarchive/"
     echo "  - $BUILD_DIR/export/$APP_NAME.app"
     echo "  - $BUILD_DIR/$APP_NAME-$version.zip"
     echo "  - $BUILD_DIR/$APP_NAME-$version.dmg"

@@ -6,7 +6,7 @@ import PromiseKit
 #endif
 
 @main
-struct GDS_FMApp: App {
+struct GDSPlayerApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
     var body: some Scene {
