@@ -134,6 +134,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         Logger.appUpdater.info("Cleaned up pending updates directory")
     }
 
+    private func validateDeferredUpdate() {
+        guard let deferredUpdate = PreferencesManager.shared.deferredUpdate else {
+            return
+        }
+
+        if deferredUpdate.loadBundle() == nil {
+            Logger.appUpdater.info("Deferred update bundle not found at \(deferredUpdate.bundlePath), clearing")
+            clearDeferredUpdate()
+        }
+    }
+
     private func showManualUpdateDialog(_ release: Release, _ asset: Release.Asset, _ bundle: Bundle) async {
         let alert = NSAlert()
         alert.messageText = "Update Downloaded"
@@ -187,6 +198,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         #if !APP_STORE
         setupAppUpdater()
+        validateDeferredUpdate()
         #endif
 
         Analytics.appOpened()
