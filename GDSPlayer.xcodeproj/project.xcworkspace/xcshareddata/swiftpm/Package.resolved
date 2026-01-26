@@ -1,5 +1,5 @@
 {
-  "originHash" : "01fe3362c81ce220d6e8be5e6225aa4802fef60138a5025dbd83836380ed7d40",
+  "originHash" : "7d395f0e45faefd20d680f32f90da4a62e097657097d9d54527b6b87a05e2275",
   "pins" : [
     {
       "identity" : "appupdater",
@@ -7,7 +7,7 @@
       "location" : "https://github.com/jorisnoo/AppUpdater",
       "state" : {
         "branch" : "develop",
-        "revision" : "1991264a4045dd974217f4ca321a2480db9092d3"
+        "revision" : "460214a075a55c4252e129323fff046feee02bc8"
       }
     },
     {

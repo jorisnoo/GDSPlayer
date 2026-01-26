@@ -17,9 +17,22 @@
 		CFE702E22F275FEB00C579E9 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		CF4891A62F1D1DEB002E107C /* Exceptions for "GDSPlayer" */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = CF4891A22F1D1DEB002E107B /* GDSPlayer */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		CF4891A52F1D1DEB002E107B /* GDSPlayer */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				CF4891A62F1D1DEB002E107C /* Exceptions for "GDSPlayer" */,
+			);
 			path = GDSPlayer;
 			sourceTree = "<group>";
 		};

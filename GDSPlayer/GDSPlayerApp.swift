@@ -49,13 +49,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         // Enable automatic installation
         updater.onDownloadSuccess = { [weak self] in
-            guard let self = self, let updater = self.updater else { return }
+            Task { @MainActor [weak self] in
+                guard let self = self, let updater = self.updater else { return }
 
-            Task { @MainActor in
                 do {
-                    // Auto-install silently
-                    try await updater.installThrowing(updater.downloadedAppBundle!)
-                    Logger.appUpdater.info("Update installed successfully, will apply on next launch")
+                    // Extract bundle from state
+                    if case .downloaded(_, _, let newBundle) = updater.state {
+                        try updater.installThrowing(newBundle)
+                        Logger.appUpdater.info("Update installed successfully, will apply on next launch")
+                    }
                 } catch {
                     Logger.appUpdater.error("Failed to install update: \(error)")
                 }
@@ -63,7 +65,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         updater.onDownloadFail = { error in
-            Logger.appUpdater.error("Update download failed: \(error)")
+            Task { @MainActor in
+                Logger.appUpdater.error("Update download failed: \(error)")
+            }
         }
 
         self.updater = updater
@@ -107,7 +111,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         Task {
             do {
-                try await updater.check()
+                try await updater.checkThrowing()
 
                 // If we reach here, an update is available and being downloaded
                 Logger.appUpdater.info("✅ Update available - starting download")
@@ -117,7 +121,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 alert.alertStyle = .informational
                 alert.addButton(withTitle: "OK")
                 alert.runModal()
-            } catch AppUpdater.Error.alreadyUpToDate {
+            } catch AUError.cancelled {
                 Logger.appUpdater.info("ℹ️ No updates available (current version is latest)")
                 let alert = NSAlert()
                 alert.messageText = "No Updates Available"
