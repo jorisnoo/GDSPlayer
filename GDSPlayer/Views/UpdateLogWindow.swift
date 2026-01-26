@@ -148,8 +148,8 @@ struct UpdateLogWindow: View {
                     }
                 }
 
-            case .downloaded(let release, let asset, _):
-                VStack(alignment: .leading, spacing: 4) {
+            case .downloaded(let release, let asset, let bundle):
+                VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundColor(.green)
@@ -159,9 +159,24 @@ struct UpdateLogWindow: View {
                     Text("Asset: \(asset.name)")
                         .font(.caption)
                         .foregroundColor(.secondary)
-                    Text("Ready to install")
-                        .font(.caption)
-                        .foregroundColor(.green)
+
+                    Divider()
+                        .padding(.vertical, 4)
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Update is ready to install. The app will restart to complete the installation.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+
+                        Button {
+                            installUpdate(bundle)
+                        } label: {
+                            Label("Install Now & Restart", systemImage: "arrow.clockwise")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.large)
+                    }
                 }
             }
         }
@@ -250,6 +265,19 @@ struct UpdateLogWindow: View {
 
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(info, forType: .string)
+    }
+
+    private func installUpdate(_ bundle: Bundle) {
+        updater.install(bundle,
+            success: {
+                // Success callback already handled by updater.onInstallSuccess
+                // which shows alert and terminates app
+            },
+            fail: { error in
+                // Error callback already handled by updater.onInstallFail
+                // which shows alert with error message
+            }
+        )
     }
     #endif
 
