@@ -23,7 +23,17 @@ jobs:
       - name: Extract app name from Xcode project
         run: |
           XCODE_PROJECT=$(ls -d *.xcodeproj | head -1)
-          APP_NAME="${XCODE_PROJECT%.xcodeproj}"
+          XCODE_SCHEME="${XCODE_PROJECT%.xcodeproj}"
+
+          # Get the actual PRODUCT_NAME from Xcode build settings
+          APP_NAME=$(xcodebuild -project "$XCODE_PROJECT" -scheme "$XCODE_SCHEME" -showBuildSettings 2>/dev/null | grep "^ *PRODUCT_NAME = " | head -1 | sed 's/.*= //' | xargs)
+
+          # Fallback to scheme name if PRODUCT_NAME not found
+          if [[ -z "$APP_NAME" ]]; then
+            echo "Warning: Could not determine PRODUCT_NAME, falling back to scheme name"
+            APP_NAME="$XCODE_SCHEME"
+          fi
+
           echo "APP_NAME=$APP_NAME" >> $GITHUB_ENV
 
       - name: Import code signing certificate
@@ -62,12 +72,13 @@ jobs:
         run: |
           VERSION="${{ github.ref_name }}"
           REPO="${{ github.repository }}"
+          APP_NAME="${{ env.APP_NAME }}"
 
-          # Create user-friendly download section
+          # Create download section
           cat > release_notes.md << EOF
           ## Download
 
-          **[⬇️ GDS.FM-${VERSION}.dmg](https://github.com/${REPO}/releases/download/${VERSION}/GDS.FM-${VERSION}.dmg)** – Double-click and drag to Applications
+          **[⬇️ ${APP_NAME}-${VERSION}.dmg](https://github.com/${REPO}/releases/download/${VERSION}/${APP_NAME}-${VERSION}.dmg)** – Double-click and drag to Applications
 
           ---
 
