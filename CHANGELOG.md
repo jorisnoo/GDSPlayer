@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.6](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.1.6) (2026-01-26)
+
+### Bug Fixes
+
+- gh release workflow ([5f06834](https://github.com/jorisnoo/GDSPlayer/commit/5f06834cf65b617216ba91d8c78d3f117f49ea18))
 ## [0.1.5](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.1.5) (2026-01-26)
 
 ### Bug Fixes
