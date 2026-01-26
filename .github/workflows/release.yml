@@ -20,6 +20,13 @@ jobs:
         id: version
         run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
+      - name: Extract repository name
+        run: |
+          # Extract repo name from GitHub repository (owner/repo -> repo)
+          REPO_NAME="${{ github.repository }}"
+          REPO_NAME="${REPO_NAME##*/}"
+          echo "REPO_NAME=$REPO_NAME" >> $GITHUB_ENV
+
       - name: Extract app name from Xcode project
         run: |
           XCODE_PROJECT=$(ls -d *.xcodeproj | head -1)
@@ -72,13 +79,13 @@ jobs:
         run: |
           VERSION="${{ github.ref_name }}"
           REPO="${{ github.repository }}"
-          APP_NAME="${{ env.APP_NAME }}"
+          REPO_NAME="${{ env.REPO_NAME }}"
 
           # Create download section
           cat > release_notes.md << EOF
           ## Download
 
-          **[⬇️ ${APP_NAME}-${VERSION}.dmg](https://github.com/${REPO}/releases/download/${VERSION}/${APP_NAME}-${VERSION}.dmg)** – Double-click and drag to Applications
+          **[⬇️ ${REPO_NAME}-${VERSION}.dmg](https://github.com/${REPO}/releases/download/${VERSION}/${REPO_NAME}-${VERSION}.dmg)** – Double-click and drag to Applications
 
           ---
 
@@ -94,8 +101,8 @@ jobs:
       - name: Create GitHub Release
         run: |
           gh release create "${{ github.ref_name }}" \
-            "build/${{ env.APP_NAME }}-${{ github.ref_name }}.dmg" \
-            "build/${{ env.APP_NAME }}-${{ github.ref_name }}.zip" \
+            "build/${{ env.REPO_NAME }}-${{ github.ref_name }}.dmg" \
+            "build/${{ env.REPO_NAME }}-${{ github.ref_name }}.zip" \
             --title "Release ${{ github.ref_name }}" \
             --notes-file release_notes.md
         env:

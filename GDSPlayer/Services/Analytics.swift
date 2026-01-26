@@ -48,7 +48,7 @@ enum Analytics {
     }
 
     static func appOpened() {
-        track("App Open")
+        track("pageview")
     }
 
     static func playbackStarted() {
