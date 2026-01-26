@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		CF0000152F24000100000012 /* AppUpdater in Frameworks */ = {isa = PBXBuildFile; productRef = CF0000142F24000100000011 /* AppUpdater */; };
 		CFA000012F24000100000001 /* AviaryInsights in Frameworks */ = {isa = PBXBuildFile; productRef = CFA000022F24000100000001 /* AviaryInsights */; };
-		CFA000052F24000100000003 /* PromiseKit in Frameworks */ = {isa = PBXBuildFile; productRef = CFA000062F24000100000003 /* PromiseKit */; };
-		CFA000102F2400010000000D /* PMKFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = CFA0000D2F2400010000000A /* PMKFoundation */; };
 		CFA000112F2400010000000E /* Path in Frameworks */ = {isa = PBXBuildFile; productRef = CFA0000E2F2400010000000B /* Path */; };
 		CFA000122F2400010000000F /* Version in Frameworks */ = {isa = PBXBuildFile; productRef = CFA0000F2F2400010000000C /* Version */; };
 		CFE702E32F275FEB00C579E9 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = CFE702E22F275FEB00C579E9 /* AppIcon.icon */; };
@@ -34,8 +32,6 @@
 			isa = PBXFrameworksBuildPhase;
 			files = (
 				CFA000012F24000100000001 /* AviaryInsights in Frameworks */,
-				CFA000052F24000100000003 /* PromiseKit in Frameworks */,
-				CFA000102F2400010000000D /* PMKFoundation in Frameworks */,
 				CFA000112F2400010000000E /* Path in Frameworks */,
 				CFA000122F2400010000000F /* Version in Frameworks */,
 				CF0000152F24000100000012 /* AppUpdater in Frameworks */,
@@ -72,8 +68,6 @@
 			name = GDSPlayer;
 			packageProductDependencies = (
 				CFA000022F24000100000001 /* AviaryInsights */,
-				CFA000062F24000100000003 /* PromiseKit */,
-				CFA0000D2F2400010000000A /* PMKFoundation */,
 				CFA0000E2F2400010000000B /* Path */,
 				CFA0000F2F2400010000000C /* Version */,
 				CF0000142F24000100000011 /* AppUpdater */,
@@ -108,8 +102,6 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				CFA000072F24000100000004 /* XCRemoteSwiftPackageReference "AviaryInsights" */,
-				CFA000092F24000100000006 /* XCRemoteSwiftPackageReference "PromiseKit" */,
-				CFA0000A2F24000100000007 /* XCRemoteSwiftPackageReference "Foundation" */,
 				CFA0000B2F24000100000008 /* XCRemoteSwiftPackageReference "Path" */,
 				CFA0000C2F24000100000009 /* XCRemoteSwiftPackageReference "Version" */,
 				CF0000132F24000100000010 /* XCRemoteSwiftPackageReference "AppUpdater" */,
@@ -358,7 +350,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/jorisnoo/AppUpdater";
 			requirement = {
-				branch = develop;
+				branch = "feature/upgrade";
 				kind = branch;
 			};
 		};
@@ -368,22 +360,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.0.1;
-			};
-		};
-		CFA000092F24000100000006 /* XCRemoteSwiftPackageReference "PromiseKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/mxcl/PromiseKit";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 6.22.1;
-			};
-		};
-		CFA0000A2F24000100000007 /* XCRemoteSwiftPackageReference "Foundation" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/PromiseKit/Foundation";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 3.4.0;
 			};
 		};
 		CFA0000B2F24000100000008 /* XCRemoteSwiftPackageReference "Path" */ = {
@@ -399,7 +375,7 @@
 			repositoryURL = "https://github.com/mxcl/Version";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.2.0;
+				minimumVersion = 2.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -414,16 +390,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CFA000072F24000100000004 /* XCRemoteSwiftPackageReference "AviaryInsights" */;
 			productName = AviaryInsights;
-		};
-		CFA000062F24000100000003 /* PromiseKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CFA000092F24000100000006 /* XCRemoteSwiftPackageReference "PromiseKit" */;
-			productName = PromiseKit;
-		};
-		CFA0000D2F2400010000000A /* PMKFoundation */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CFA0000A2F24000100000007 /* XCRemoteSwiftPackageReference "Foundation" */;
-			productName = PMKFoundation;
 		};
 		CFA0000E2F2400010000000B /* Path */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -1,7 +1,6 @@
 import SwiftUI
 
 #if !APP_STORE
-import PromiseKit
 import AppUpdater
 #endif
 
@@ -72,8 +71,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Debug logging
         Logger.appUpdater.info("🔍 Starting update check")
 
-        updater.check()
-            .done { _ in
+        Task {
+            do {
+                try await updater.check()
+
+                // If we reach here, an update is available and being downloaded
                 Logger.appUpdater.info("✅ Update available - starting download")
                 let alert = NSAlert()
                 alert.messageText = "Update Available"
@@ -81,29 +83,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 alert.alertStyle = .informational
                 alert.addButton(withTitle: "OK")
                 alert.runModal()
-            }
-            .catch(policy: .allErrors) { error in
+            } catch AppUpdater.Error.alreadyUpToDate {
+                Logger.appUpdater.info("ℹ️ No updates available (current version is latest)")
+                let alert = NSAlert()
+                alert.messageText = "No Updates Available"
+                alert.informativeText = "You're running the latest version of GDS.FM."
+                alert.alertStyle = .informational
+                alert.addButton(withTitle: "OK")
+                alert.runModal()
+            } catch {
                 // Log error details for debugging
                 Logger.appUpdater.error("❌ Update check error: \(error.localizedDescription, privacy: .public)")
                 Logger.appUpdater.error("   Error type: \(String(describing: type(of: error)), privacy: .public)")
-                if let pmkError = error as? PMKError {
-                    Logger.appUpdater.error("   PMKError details: \(String(describing: pmkError), privacy: .public)")
-                }
 
                 let alert = NSAlert()
-                if error.isCancelled {
-                    Logger.appUpdater.info("ℹ️ No updates available (current version is latest)")
-                    alert.messageText = "No Updates Available"
-                    alert.informativeText = "You're running the latest version of GDS.FM."
-                    alert.alertStyle = .informational
-                } else {
-                    alert.messageText = "Update Check Failed"
-                    alert.informativeText = "Could not check for updates. Please try again later."
-                    alert.alertStyle = .warning
-                }
+                alert.messageText = "Update Check Failed"
+                alert.informativeText = "Could not check for updates. Please try again later."
+                alert.alertStyle = .warning
                 alert.addButton(withTitle: "OK")
                 alert.runModal()
             }
+        }
     }
     #endif
 

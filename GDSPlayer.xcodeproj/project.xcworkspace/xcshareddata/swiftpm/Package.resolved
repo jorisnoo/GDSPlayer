@@ -1,13 +1,13 @@
 {
-  "originHash" : "8569d3a046c0179ba1137206bd8842e861fe81ebfa6f693a42f76350cc091862",
+  "originHash" : "1ed12b658af6303872104b17bec61354fd30d21d691c0a94edab99d9426d368c",
   "pins" : [
     {
       "identity" : "appupdater",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jorisnoo/AppUpdater",
       "state" : {
-        "branch" : "develop",
-        "revision" : "50c49f20bd7e80268e49a742cc173e66b7d75ca6"
+        "branch" : "feature/upgrade",
+        "revision" : "94aa7a15f137b508963bc3c1a94068c6af617552"
       }
     },
     {
@@ -20,30 +20,12 @@
       }
     },
     {
-      "identity" : "foundation",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/PromiseKit/Foundation",
-      "state" : {
-        "revision" : "985f17fa69ee0e5b7eb3ff9be87ffc4e05fc0927",
-        "version" : "3.4.0"
-      }
-    },
-    {
       "identity" : "path.swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mxcl/Path.swift",
       "state" : {
         "revision" : "8e355c28e9393c42e58b18c54cace2c42c98a616",
         "version" : "1.4.1"
-      }
-    },
-    {
-      "identity" : "promisekit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mxcl/PromiseKit",
-      "state" : {
-        "revision" : "8a98e31a47854d3180882c8068cc4d9381bf382d",
-        "version" : "6.22.1"
       }
     },
     {
@@ -87,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mxcl/Version",
       "state" : {
-        "revision" : "200046c93f6d5d78a6d72bfd9c0b27a95e9c0a2b",
-        "version" : "1.2.0"
+        "revision" : "67ce582bb9de70e1eb2ee41fd71aad3b5f86d97b",
+        "version" : "2.2.0"
       }
     }
   ],
