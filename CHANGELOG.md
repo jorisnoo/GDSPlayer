@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.8](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.1.8) (2026-01-26)
+
+### Features
+
+- add button to update ([96550da](https://github.com/jorisnoo/GDSPlayer/commit/96550da3c3513d150ea95cac0f24cdb5eacf8744))
+- use fork of AppUpdater ([f15b89d](https://github.com/jorisnoo/GDSPlayer/commit/f15b89d6515fca431cfc3a9a83bed2c59a5e4ddf))
+
+### Bug Fixes
+
+- deferred update ([b2e19c6](https://github.com/jorisnoo/GDSPlayer/commit/b2e19c6bdc12324c339799ab5d163ee6cecb7283))
+- decode track names ([3f78df2](https://github.com/jorisnoo/GDSPlayer/commit/3f78df2438a45821bd7b3fbf5bc5356eb8c00c88))
+
+### Code Refactoring
+
+- cleanup update & logs ([4824ca4](https://github.com/jorisnoo/GDSPlayer/commit/4824ca47e898db436f6771c701afc3411bf9e825))
+- cleanup ([ef9ccd7](https://github.com/jorisnoo/GDSPlayer/commit/ef9ccd70d082b24d77cc9f428236cfb64e226736))
+
+### Build System
+
+- update updater ([b14d729](https://github.com/jorisnoo/GDSPlayer/commit/b14d7297edfcf8cff44da2b094babe753349a86c))
+- upgrade AppUpdater ([e423cfd](https://github.com/jorisnoo/GDSPlayer/commit/e423cfd15ac90820e3bac9828878e34dfb7f6ce7))
+- fix issues in AppUpdater ([8a974ba](https://github.com/jorisnoo/GDSPlayer/commit/8a974ba7cba0eb5efb833357c6867ac04cdbc931))
 ## [0.1.7](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.1.7) (2026-01-26)
 
 ### Bug Fixes
