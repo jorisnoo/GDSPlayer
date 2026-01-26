@@ -10,11 +10,13 @@ enum UpdateCheckSource {
 }
 #endif
 
+#if !APP_STORE
 import os.log
 
 extension Logger {
     static let appUpdater = Logger(subsystem: "com.gds.fm", category: "AppUpdater")
 }
+#endif
 
 @main
 struct GDSPlayerApp: App {
@@ -38,7 +40,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     #if !APP_STORE
     var updater: AppUpdater?
-    var logWindow: NSWindow?
     var currentCheckSource: UpdateCheckSource?
     private var isInstallingUpdate = false
 
@@ -164,17 +165,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    private func installUpdate(_ bundle: Bundle, source: String) async throws {
-        guard let updater = self.updater else {
-            throw NSError(domain: "GDSPlayerApp", code: 1, userInfo: [
-                NSLocalizedDescriptionKey: "AppUpdater not available"
-            ])
-        }
-
-        Logger.appUpdater.info("Installing update from source: \(source)")
-        // installThrowing replaces bundle and relaunches - doesn't return on success
-        try await updater.installThrowing(bundle)
-    }
     #endif
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -315,7 +305,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         Task { @MainActor in
             do {
-                try await installUpdate(bundle, source: "menu")
+                Logger.appUpdater.info("Installing update from menu")
+                try await updater?.installThrowing(bundle)
             } catch {
                 Logger.appUpdater.error("Failed to install from menu: \(error)")
 
@@ -329,53 +320,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    func showUpdateLogs() {
-        // Reuse existing window if already open
-        if let existingWindow = logWindow, existingWindow.isVisible {
-            existingWindow.makeKeyAndOrderFront(nil)
-            return
-        }
-
-        guard let updater else {
-            Logger.appUpdater.warning("AppUpdater not initialized")
-            return
-        }
-
-        let contentView = UpdateLogWindow(updater: updater)
-        let hostingController = NSHostingController(rootView: contentView)
-
-        let panel = NSPanel(
-            contentRect: NSRect(x: 0, y: 0, width: 700, height: 500),
-            styleMask: [.titled, .closable, .resizable, .utilityWindow],
-            backing: .buffered,
-            defer: false
-        )
-
-        panel.title = "AppUpdater Debug Logs"
-        panel.contentViewController = hostingController
-        panel.isFloatingPanel = true
-        panel.level = .floating
-        panel.center()
-        panel.setFrameAutosaveName("UpdateLogWindow")
-
-        // Clear reference when window closes
-        NotificationCenter.default.addObserver(
-            forName: NSWindow.willCloseNotification,
-            object: panel,
-            queue: .main
-        ) { [weak self] _ in
-            MainActor.assumeIsolated {
-                self?.logWindow = nil
-            }
-        }
-
-        logWindow = panel
-        panel.makeKeyAndOrderFront(nil)
-    }
-
-    @objc func showUpdateLogsMenu() {
-        showUpdateLogs()
-    }
     #endif
 
     @objc private func statusItemClicked(_ sender: NSStatusBarButton) {
@@ -562,10 +506,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             updateItem.target = self
             menu.addItem(updateItem)
         }
-
-        let logsItem = NSMenuItem(title: "View Update Logs...", action: #selector(showUpdateLogsMenu), keyEquivalent: "")
-        logsItem.target = self
-        menu.addItem(logsItem)
         #endif
 
         let quitItem = NSMenuItem(title: "Quit", action: #selector(quit), keyEquivalent: "q")

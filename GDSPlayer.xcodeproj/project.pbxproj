@@ -23,9 +23,6 @@
 			membershipExceptions = (
 				Info.plist,
 			);
-			resourceExceptions = (
-				Info.plist,
-			);
 			target = CF4891A22F1D1DEB002E107B /* GDSPlayer */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
