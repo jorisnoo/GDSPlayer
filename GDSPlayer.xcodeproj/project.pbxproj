@@ -18,7 +18,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		CF4891A62F1D1DEB002E107C /* Exceptions for "GDSPlayer" */ = {
+		CF4891A62F1D1DEB002E107C /* Exceptions for "GDSPlayer" folder in "GDSPlayer" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -31,7 +31,7 @@
 		CF4891A52F1D1DEB002E107B /* GDSPlayer */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				CF4891A62F1D1DEB002E107C /* Exceptions for "GDSPlayer" */,
+				CF4891A62F1D1DEB002E107C /* Exceptions for "GDSPlayer" folder in "GDSPlayer" target */,
 			);
 			path = GDSPlayer;
 			sourceTree = "<group>";

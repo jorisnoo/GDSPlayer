@@ -32,6 +32,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     #if !APP_STORE
     var updater: AppUpdater?
+    var logWindow: NSWindow?
 
     func setupAppUpdater() {
         guard let owner = Bundle.main.object(forInfoDictionaryKey: "GitHubOwner") as? String,
@@ -47,26 +48,56 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             interval: 24 * 60 * 60  // Check every 24 hours
         )
 
-        // Enable automatic installation
+        Logger.appUpdater.info("AppUpdater initialized")
+
+        // Setup download callbacks
         updater.onDownloadSuccess = { [weak self] in
             Task { @MainActor [weak self] in
                 guard let self = self, let updater = self.updater else { return }
 
-                do {
-                    // Extract bundle from state
-                    if case .downloaded(_, _, let newBundle) = updater.state {
+                Logger.appUpdater.info("✅ Update download completed")
+
+                // Trigger automatic installation
+                if case .downloaded(_, _, let newBundle) = updater.state {
+                    do {
                         try updater.installThrowing(newBundle)
-                        Logger.appUpdater.info("Update installed successfully, will apply on next launch")
+                    } catch {
+                        Logger.appUpdater.error("Failed to trigger installation: \(error)")
                     }
-                } catch {
-                    Logger.appUpdater.error("Failed to install update: \(error)")
                 }
             }
         }
 
         updater.onDownloadFail = { error in
             Task { @MainActor in
-                Logger.appUpdater.error("Update download failed: \(error)")
+                Logger.appUpdater.error("❌ Update download failed: \(error)")
+            }
+        }
+
+        // Setup install callbacks
+        updater.onInstallSuccess = {
+            Task { @MainActor in
+                Logger.appUpdater.info("✅ Update installed successfully - restart app to apply")
+
+                let alert = NSAlert()
+                alert.messageText = "Update Installed"
+                alert.informativeText = "Restart GDS.FM to use the new version."
+                alert.alertStyle = .informational
+                alert.addButton(withTitle: "OK")
+                alert.runModal()
+            }
+        }
+
+        updater.onInstallFail = { error in
+            Task { @MainActor in
+                Logger.appUpdater.error("❌ Installation failed: \(error)")
+
+                let alert = NSAlert()
+                alert.messageText = "Installation Failed"
+                alert.informativeText = "Could not install update: \(error)"
+                alert.alertStyle = .warning
+                alert.addButton(withTitle: "OK")
+                alert.runModal()
             }
         }
 
@@ -106,42 +137,93 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
-        // Debug logging
         Logger.appUpdater.info("🔍 Starting update check")
 
-        Task {
-            do {
-                try await updater.checkThrowing()
+        updater.check(
+            success: {
+                Task { @MainActor in
+                    Logger.appUpdater.info("✅ Update check completed - download started")
 
-                // If we reach here, an update is available and being downloaded
-                Logger.appUpdater.info("✅ Update available - starting download")
-                let alert = NSAlert()
-                alert.messageText = "Update Available"
-                alert.informativeText = "A new version is being downloaded and will be installed."
-                alert.alertStyle = .informational
-                alert.addButton(withTitle: "OK")
-                alert.runModal()
-            } catch AUError.cancelled {
-                Logger.appUpdater.info("ℹ️ No updates available (current version is latest)")
-                let alert = NSAlert()
-                alert.messageText = "No Updates Available"
-                alert.informativeText = "You're running the latest version of GDS.FM."
-                alert.alertStyle = .informational
-                alert.addButton(withTitle: "OK")
-                alert.runModal()
-            } catch {
-                // Log error details for debugging
-                Logger.appUpdater.error("❌ Update check error: \(error.localizedDescription, privacy: .public)")
-                Logger.appUpdater.error("   Error type: \(String(describing: type(of: error)), privacy: .public)")
+                    let alert = NSAlert()
+                    alert.messageText = "Update Available"
+                    alert.informativeText = "A new version is being downloaded and will be installed."
+                    alert.alertStyle = .informational
+                    alert.addButton(withTitle: "OK")
+                    alert.runModal()
+                }
+            },
+            fail: { error in
+                Task { @MainActor in
+                    if let auError = error as? AUError, case .cancelled = auError {
+                        Logger.appUpdater.info("ℹ️ No updates available (current version is latest)")
 
-                let alert = NSAlert()
-                alert.messageText = "Update Check Failed"
-                alert.informativeText = "Could not check for updates. Please try again later."
-                alert.alertStyle = .warning
-                alert.addButton(withTitle: "OK")
-                alert.runModal()
+                        let alert = NSAlert()
+                        alert.messageText = "No Updates Available"
+                        alert.informativeText = "You're running the latest version of GDS.FM."
+                        alert.alertStyle = .informational
+                        alert.addButton(withTitle: "OK")
+                        alert.runModal()
+                    } else {
+                        Logger.appUpdater.error("❌ Update check error: \(error.localizedDescription)")
+
+                        let alert = NSAlert()
+                        alert.messageText = "Update Check Failed"
+                        alert.informativeText = "Could not check for updates. Please try again later."
+                        alert.alertStyle = .warning
+                        alert.addButton(withTitle: "OK")
+                        alert.runModal()
+                    }
+                }
+            }
+        )
+    }
+
+    func showUpdateLogs() {
+        // Reuse existing window if already open
+        if let existingWindow = logWindow, existingWindow.isVisible {
+            existingWindow.makeKeyAndOrderFront(nil)
+            return
+        }
+
+        guard let updater else {
+            Logger.appUpdater.warning("AppUpdater not initialized")
+            return
+        }
+
+        let contentView = UpdateLogWindow(updater: updater)
+        let hostingController = NSHostingController(rootView: contentView)
+
+        let panel = NSPanel(
+            contentRect: NSRect(x: 0, y: 0, width: 700, height: 500),
+            styleMask: [.titled, .closable, .resizable, .utilityWindow],
+            backing: .buffered,
+            defer: false
+        )
+
+        panel.title = "AppUpdater Debug Logs"
+        panel.contentViewController = hostingController
+        panel.isFloatingPanel = true
+        panel.level = .floating
+        panel.center()
+        panel.setFrameAutosaveName("UpdateLogWindow")
+
+        // Clear reference when window closes
+        NotificationCenter.default.addObserver(
+            forName: NSWindow.willCloseNotification,
+            object: panel,
+            queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.logWindow = nil
             }
         }
+
+        logWindow = panel
+        panel.makeKeyAndOrderFront(nil)
+    }
+
+    @objc func showUpdateLogsMenu() {
+        showUpdateLogs()
     }
     #endif
 
@@ -315,6 +397,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let updateItem = NSMenuItem(title: "Check for Updates...", action: #selector(checkForUpdates), keyEquivalent: "")
         updateItem.target = self
         menu.addItem(updateItem)
+
+        let logsItem = NSMenuItem(title: "View Update Logs...", action: #selector(showUpdateLogsMenu), keyEquivalent: "")
+        logsItem.target = self
+        menu.addItem(logsItem)
         #endif
 
         let quitItem = NSMenuItem(title: "Quit", action: #selector(quit), keyEquivalent: "q")
