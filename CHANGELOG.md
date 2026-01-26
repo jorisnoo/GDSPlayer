@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.5](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.1.5) (2026-01-26)
+
+### Bug Fixes
+
+- build script ([4aea294](https://github.com/jorisnoo/GDSPlayer/commit/4aea29480497ad4fd199b624d8ffeeed8be410c4))
+
+### Code Refactoring
+
+- change repo name ([c5e9c7b](https://github.com/jorisnoo/GDSPlayer/commit/c5e9c7b880e75d2cd58f359fc246db010516b5d2))
+
+### Documentation
+
+- update wording ([7342837](https://github.com/jorisnoo/GDSPlayer/commit/734283762815ff1e1d3e96b1516b5e24100f5d7b))
+- update release download link ([ebdf66a](https://github.com/jorisnoo/GDSPlayer/commit/ebdf66a0823a38b11e1bd609be207171a64e57e2))
+
+### Build System
+
+- remove build-config file ([cec9b61](https://github.com/jorisnoo/GDSPlayer/commit/cec9b61bb471a354fb030940609300a490e23f61))
 ## [0.1.4](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.1.4) (2026-01-25)
 
 ### Bug Fixes
