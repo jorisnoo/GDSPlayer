@@ -3,6 +3,22 @@ import AVFoundation
 import Foundation
 import MediaPlayer
 
+private extension String {
+    var decodingHTMLEntities: String {
+        guard let data = data(using: .utf8),
+              let attributed = try? NSAttributedString(
+                  data: data,
+                  options: [
+                      .documentType: NSAttributedString.DocumentType.html,
+                      .characterEncoding: String.Encoding.utf8.rawValue
+                  ],
+                  documentAttributes: nil
+              )
+        else { return self }
+        return attributed.string
+    }
+}
+
 enum PlaybackState {
     case stopped
     case loading
@@ -177,8 +193,8 @@ final class RadioPlayer {
             let liveInfo = try JSONDecoder().decode(LiveInfo.self, from: data)
 
             showName = liveInfo.shows.current?.name
-            artistName = liveInfo.tracks.current?.metadata?.artistName
-            trackTitle = liveInfo.tracks.current?.metadata?.trackTitle
+            artistName = liveInfo.tracks.current?.metadata?.artistName?.decodingHTMLEntities
+            trackTitle = liveInfo.tracks.current?.metadata?.trackTitle?.decodingHTMLEntities
             onStateChange?()
 
             if state == .playing {
