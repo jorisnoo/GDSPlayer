@@ -22,8 +22,8 @@ XCODE_SCHEME="${XCODE_PROJECT%.xcodeproj}"
 NOTARY_PROFILE="$XCODE_SCHEME"
 
 # Get the actual product name from Xcode build settings
-# This may differ from the scheme name (e.g., scheme "GDSPlayer" produces "GDS.FM.app")
-APP_NAME=$(xcodebuild -project "$PROJECT_ROOT/$XCODE_PROJECT" -scheme "$XCODE_SCHEME" -showBuildSettings 2>/dev/null | grep "PRODUCT_NAME =" | head -1 | sed 's/.*= //' | xargs)
+# This may differ from the scheme name (e.g., scheme "GDSPlayer" produces "GDS.FM")
+APP_NAME=$(xcodebuild -project "$PROJECT_ROOT/$XCODE_PROJECT" -scheme "$XCODE_SCHEME" -showBuildSettings 2>/dev/null | grep "^ *PRODUCT_NAME = " | head -1 | sed 's/.*= //' | xargs)
 
 if [[ -z "$APP_NAME" ]]; then
     echo "Warning: Could not determine PRODUCT_NAME, falling back to scheme name"
