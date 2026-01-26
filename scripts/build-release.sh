@@ -15,9 +15,6 @@ if [[ -z "$REPO_NAME" ]]; then
     REPO_NAME="GDSPlayer"  # Fallback to known repo name
 fi
 
-# AppUpdater expects lowercase asset names (e.g., gdsplayer-X.Y.Z.zip)
-REPO_NAME_LOWER=$(echo "$REPO_NAME" | tr '[:upper:]' '[:lower:]')
-
 # Auto-detect Xcode project
 XCODE_PROJECT=$(ls -d "$PROJECT_ROOT"/*.xcodeproj 2>/dev/null | head -1 | xargs basename 2>/dev/null || echo "")
 
@@ -43,6 +40,7 @@ fi
 BUILD_ONLY=true
 CLEAN=false
 VERSION=""
+CONFIGURATION="Release"
 
 # Colors for output
 RED='\033[0;31m'
@@ -60,10 +58,11 @@ Usage: $(basename "$0") [OPTIONS]
 Build, sign, and optionally notarise $APP_NAME.
 
 Options:
-    --notarise      Build, sign, package AND notarise (default: skip notarisation)
-    --clean         Remove build artifacts before building
-    --version X.Y.Z Override version (default: from git tag)
-    --help          Show this help message
+    --notarise               Build, sign, package AND notarise (default: skip notarisation)
+    --clean                  Remove build artifacts before building
+    --version X.Y.Z          Override version (default: from git tag)
+    --configuration CONFIG   Build configuration (default: Release, options: Debug, Release, AppStore Debug, AppStore Release)
+    --help                   Show this help message
 
 Environment Variables (for notarisation):
     NOTARY_PROFILE      Keychain profile name (recommended for local builds)
@@ -195,7 +194,7 @@ build_archive() {
     xcodebuild archive \
         -project "$PROJECT_ROOT/$XCODE_PROJECT" \
         -scheme "$XCODE_SCHEME" \
-        -configuration Release \
+        -configuration "$CONFIGURATION" \
         -archivePath "$BUILD_DIR/$XCODE_SCHEME.xcarchive" \
         CODE_SIGN_STYLE=Manual \
         CODE_SIGN_IDENTITY="$cert_name" \
@@ -207,6 +206,7 @@ build_archive() {
 
 export_app() {
     local team_id="${APPLE_TEAM_ID:-}"
+    local export_options_plist
 
     # If APPLE_TEAM_ID is not set, try to extract from certificate
     if [ -z "$team_id" ]; then
@@ -215,8 +215,18 @@ export_app() {
 
     log_info "Exporting app..."
 
-    # Create ExportOptions.plist
-    cat > "$BUILD_DIR/ExportOptions.plist" << EOF
+    # Use App Store export options if building for App Store
+    if [[ "$CONFIGURATION" == *"AppStore"* ]]; then
+        export_options_plist="$SCRIPT_DIR/ExportOptions-AppStore.plist"
+        if [ ! -f "$export_options_plist" ]; then
+            log_error "ExportOptions-AppStore.plist not found at $export_options_plist"
+            exit 1
+        fi
+        log_info "Using App Store export options"
+    else
+        # Create Developer ID export options
+        export_options_plist="$BUILD_DIR/ExportOptions.plist"
+        cat > "$export_options_plist" << EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -232,10 +242,12 @@ export_app() {
 </dict>
 </plist>
 EOF
+        log_info "Using Developer ID export options"
+    fi
 
     xcodebuild -exportArchive \
         -archivePath "$BUILD_DIR/$XCODE_SCHEME.xcarchive" \
-        -exportOptionsPlist "$BUILD_DIR/ExportOptions.plist" \
+        -exportOptionsPlist "$export_options_plist" \
         -exportPath "$BUILD_DIR/export"
 
     log_info "App exported successfully."
@@ -243,7 +255,7 @@ EOF
 
 create_zip() {
     local version="$1"
-    local zip_path="$BUILD_DIR/$REPO_NAME_LOWER-$version.zip"
+    local zip_path="$BUILD_DIR/$APP_NAME-$version.zip"
 
     log_info "Creating ZIP archive..."
 
@@ -255,7 +267,7 @@ create_zip() {
 
 create_dmg() {
     local version="$1"
-    local dmg_path="$BUILD_DIR/$REPO_NAME_LOWER-$version.dmg"
+    local dmg_path="$BUILD_DIR/$APP_NAME-$version.dmg"
 
     log_info "Creating DMG..."
 
@@ -278,7 +290,7 @@ create_dmg() {
 
 sign_dmg() {
     local version="$1"
-    local dmg_path="$BUILD_DIR/$REPO_NAME_LOWER-$version.dmg"
+    local dmg_path="$BUILD_DIR/$APP_NAME-$version.dmg"
     local cert_name="${MACOS_CERTIFICATE_NAME:-Developer ID Application}"
 
     log_info "Signing DMG..."
@@ -315,7 +327,7 @@ staple_app() {
 
 staple_dmg() {
     local version="$1"
-    local dmg_path="$BUILD_DIR/$REPO_NAME_LOWER-$version.dmg"
+    local dmg_path="$BUILD_DIR/$APP_NAME-$version.dmg"
 
     log_info "Stapling notarisation ticket to DMG..."
     xcrun stapler staple "$dmg_path"
@@ -324,7 +336,7 @@ staple_dmg() {
 
 verify_notarisation() {
     local version="$1"
-    local dmg_path="$BUILD_DIR/$REPO_NAME_LOWER-$version.dmg"
+    local dmg_path="$BUILD_DIR/$APP_NAME-$version.dmg"
 
     log_info "Verifying notarisation..."
     spctl -a -vvv -t install "$dmg_path"
@@ -346,8 +358,8 @@ print_summary() {
     echo "Artifacts:"
     echo "  - $BUILD_DIR/$XCODE_SCHEME.xcarchive/"
     echo "  - $BUILD_DIR/export/$APP_NAME.app"
-    echo "  - $BUILD_DIR/$REPO_NAME_LOWER-$version.zip"
-    echo "  - $BUILD_DIR/$REPO_NAME_LOWER-$version.dmg"
+    echo "  - $BUILD_DIR/$APP_NAME-$version.zip"
+    echo "  - $BUILD_DIR/$APP_NAME-$version.dmg"
     echo ""
     if [ "$notarised" = "true" ]; then
         echo "Status: Notarised and stapled"
@@ -370,6 +382,10 @@ while [[ $# -gt 0 ]]; do
             ;;
         --version)
             VERSION="$2"
+            shift 2
+            ;;
+        --configuration)
+            CONFIGURATION="$2"
             shift 2
             ;;
         --help)
@@ -421,14 +437,14 @@ main() {
     # Notarise if not build-only
     if [ "$BUILD_ONLY" = false ]; then
         # Notarise ZIP
-        notarise_file "$BUILD_DIR/$REPO_NAME_LOWER-$version.zip"
+        notarise_file "$BUILD_DIR/$APP_NAME-$version.zip"
 
         # Staple app
         staple_app
 
         # Recreate ZIP with stapled app
         log_info "Recreating ZIP with stapled app..."
-        rm "$BUILD_DIR/$REPO_NAME_LOWER-$version.zip"
+        rm "$BUILD_DIR/$APP_NAME-$version.zip"
         create_zip "$version"
 
         # Create DMG with stapled app
@@ -438,7 +454,7 @@ main() {
         sign_dmg "$version"
 
         # Notarise DMG
-        notarise_file "$BUILD_DIR/$REPO_NAME_LOWER-$version.dmg"
+        notarise_file "$BUILD_DIR/$APP_NAME-$version.dmg"
 
         # Staple DMG
         staple_dmg "$version"

@@ -31,13 +31,43 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var currentRotatingSymbol: String?
 
     #if !APP_STORE
-    let updater: AppUpdater? = {
+    var updater: AppUpdater?
+
+    func setupAppUpdater() {
         guard let owner = Bundle.main.object(forInfoDictionaryKey: "GitHubOwner") as? String,
               let repo = Bundle.main.object(forInfoDictionaryKey: "GitHubRepo") as? String else {
-            return nil
+            Logger.appUpdater.warning("AppUpdater not configured - check Info.plist for GitHubOwner and GitHubRepo")
+            return
         }
-        return AppUpdater(owner: owner, repo: repo)
-    }()
+
+        let updater = AppUpdater(
+            owner: owner,
+            repo: repo,
+            releasePrefix: "GDS.FM",
+            interval: 24 * 60 * 60  // Check every 24 hours
+        )
+
+        // Enable automatic installation
+        updater.onDownloadSuccess = { [weak self] in
+            guard let self = self, let updater = self.updater else { return }
+
+            Task { @MainActor in
+                do {
+                    // Auto-install silently
+                    try await updater.installThrowing(updater.downloadedAppBundle!)
+                    Logger.appUpdater.info("Update installed successfully, will apply on next launch")
+                } catch {
+                    Logger.appUpdater.error("Failed to install update: \(error)")
+                }
+            }
+        }
+
+        updater.onDownloadFail = { error in
+            Logger.appUpdater.error("Update download failed: \(error)")
+        }
+
+        self.updater = updater
+    }
     #endif
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -57,6 +87,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         buildMenu()
         player.play()
+
+        #if !APP_STORE
+        setupAppUpdater()
+        #endif
 
         Analytics.appOpened()
     }
