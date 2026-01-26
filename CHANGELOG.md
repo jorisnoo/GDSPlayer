@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.7](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.1.7) (2026-01-26)
+
+### Bug Fixes
+
+- autoupdater paths ([4acf713](https://github.com/jorisnoo/GDSPlayer/commit/4acf713a7477d35f6ff3c7be9e9294ec9721c296))
 ## [0.1.6](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.1.6) (2026-01-26)
 
 ### Bug Fixes
