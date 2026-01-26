@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF0000152F24000100000012 /* AppUpdater in Frameworks */ = {isa = PBXBuildFile; productRef = CF0000142F24000100000011 /* AppUpdater */; };
 		CFA000012F24000100000001 /* AviaryInsights in Frameworks */ = {isa = PBXBuildFile; productRef = CFA000022F24000100000001 /* AviaryInsights */; };
 		CFA000052F24000100000003 /* PromiseKit in Frameworks */ = {isa = PBXBuildFile; productRef = CFA000062F24000100000003 /* PromiseKit */; };
 		CFA000102F2400010000000D /* PMKFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = CFA0000D2F2400010000000A /* PMKFoundation */; };
 		CFA000112F2400010000000E /* Path in Frameworks */ = {isa = PBXBuildFile; productRef = CFA0000E2F2400010000000B /* Path */; };
 		CFA000122F2400010000000F /* Version in Frameworks */ = {isa = PBXBuildFile; productRef = CFA0000F2F2400010000000C /* Version */; };
-		CF0000152F24000100000012 /* AppUpdater in Frameworks */ = {isa = PBXBuildFile; productRef = CF0000142F24000100000011 /* AppUpdater */; };
 		CFE702E32F275FEB00C579E9 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = CFE702E22F275FEB00C579E9 /* AppIcon.icon */; };
 /* End PBXBuildFile section */
 
@@ -354,6 +354,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		CF0000132F24000100000010 /* XCRemoteSwiftPackageReference "AppUpdater" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jorisnoo/AppUpdater";
+			requirement = {
+				branch = develop;
+				kind = branch;
+			};
+		};
 		CFA000072F24000100000004 /* XCRemoteSwiftPackageReference "AviaryInsights" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/brightdigit/AviaryInsights";
@@ -394,17 +402,14 @@
 				minimumVersion = 1.2.0;
 			};
 		};
-		CF0000132F24000100000010 /* XCRemoteSwiftPackageReference "AppUpdater" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/jorisnoo/AppUpdater";
-			requirement = {
-				branch = develop;
-				kind = branch;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		CF0000142F24000100000011 /* AppUpdater */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CF0000132F24000100000010 /* XCRemoteSwiftPackageReference "AppUpdater" */;
+			productName = AppUpdater;
+		};
 		CFA000022F24000100000001 /* AviaryInsights */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CFA000072F24000100000004 /* XCRemoteSwiftPackageReference "AviaryInsights" */;
@@ -429,11 +434,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CFA0000C2F24000100000009 /* XCRemoteSwiftPackageReference "Version" */;
 			productName = Version;
-		};
-		CF0000142F24000100000011 /* AppUpdater */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CF0000132F24000100000010 /* XCRemoteSwiftPackageReference "AppUpdater" */;
-			productName = AppUpdater;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

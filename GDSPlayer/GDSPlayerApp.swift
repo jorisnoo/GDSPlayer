@@ -84,10 +84,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
             .catch(policy: .allErrors) { error in
                 // Log error details for debugging
-                Logger.appUpdater.error("❌ Update check error: \(error.localizedDescription)")
-                Logger.appUpdater.error("   Error type: \(String(describing: type(of: error)))")
+                Logger.appUpdater.error("❌ Update check error: \(error.localizedDescription, privacy: .public)")
+                Logger.appUpdater.error("   Error type: \(String(describing: type(of: error)), privacy: .public)")
                 if let pmkError = error as? PMKError {
-                    Logger.appUpdater.error("   PMKError details: \(String(describing: pmkError))")
+                    Logger.appUpdater.error("   PMKError details: \(String(describing: pmkError), privacy: .public)")
                 }
 
                 let alert = NSAlert()
