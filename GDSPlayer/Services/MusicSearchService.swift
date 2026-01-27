@@ -1,11 +1,12 @@
 import AppKit
 
 enum MusicSearchService {
-    static func openSearch(artist: String, track: String, service: MusicService) {
+    @discardableResult
+    static func openSearch(artist: String, track: String, service: MusicService) -> String? {
         let query = "\(artist) \(track)"
 
         guard let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
-            return
+            return nil
         }
 
         let urlString: String
@@ -19,9 +20,11 @@ enum MusicSearchService {
         }
 
         guard let url = URL(string: urlString) else {
-            return
+            return nil
         }
 
         NSWorkspace.shared.open(url)
+
+        return urlString
     }
 }

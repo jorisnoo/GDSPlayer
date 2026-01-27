@@ -548,17 +548,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
-        Analytics.trackClick(
-            artist: artist,
-            trackName: track,
-            service: PreferencesManager.shared.selectedMusicService.displayName
-        )
-
-        MusicSearchService.openSearch(
+        if let url = MusicSearchService.openSearch(
             artist: artist,
             track: track,
             service: PreferencesManager.shared.selectedMusicService
-        )
+        ) {
+            Analytics.outboundLinkClick(url: url)
+        }
     }
 
     @objc private func selectMusicService(_ sender: NSMenuItem) {
