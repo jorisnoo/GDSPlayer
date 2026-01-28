@@ -4,8 +4,10 @@
 <dict>
 	<key>AnalyticsEnabled</key>
 	<true/>
-	<key>AnalyticsServerURL</key>
-	<string>https://noordermeer.ch/api</string>
+	<key>AnalyticsAPIURL</key>
+	<string>https://app-analytics.test/api/events</string>
+	<key>AnalyticsAPIToken</key>
+	<string>1|u8EFvVZUvvjF96cNP4JzipTYL0jnrbCEtV9nyrX6629b376f</string>
 	<key>GitHubOwner</key>
 	<string>jorisnoo</string>
 	<key>GitHubRepo</key>

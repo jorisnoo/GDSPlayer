@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		CF6868C62F2780B500C31A17 /* AppUpdater in Frameworks */ = {isa = PBXBuildFile; productRef = CF6868C52F2780B500C31A17 /* AppUpdater */; };
-		CFA000012F24000100000001 /* AviaryInsights in Frameworks */ = {isa = PBXBuildFile; productRef = CFA000022F24000100000001 /* AviaryInsights */; };
 		CFE702E32F275FEB00C579E9 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = CFE702E22F275FEB00C579E9 /* AppIcon.icon */; };
 /* End PBXBuildFile section */
 
@@ -43,7 +42,6 @@
 			isa = PBXFrameworksBuildPhase;
 			files = (
 				CF6868C62F2780B500C31A17 /* AppUpdater in Frameworks */,
-				CFA000012F24000100000001 /* AviaryInsights in Frameworks */,
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -76,7 +74,6 @@
 			);
 			name = GDSPlayer;
 			packageProductDependencies = (
-				CFA000022F24000100000001 /* AviaryInsights */,
 				CF6868C52F2780B500C31A17 /* AppUpdater */,
 			);
 			productName = GDSPlayer;
@@ -108,7 +105,6 @@
 			mainGroup = CF48919A2F1D1DEB002E107B;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				CFA000072F24000100000004 /* XCRemoteSwiftPackageReference "AviaryInsights" */,
 				CF6868C42F2780B500C31A17 /* XCRemoteSwiftPackageReference "AppUpdater" */,
 			);
 			preferredProjectObjectVersion = 90;
@@ -554,14 +550,6 @@
 				kind = branch;
 			};
 		};
-		CFA000072F24000100000004 /* XCRemoteSwiftPackageReference "AviaryInsights" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/brightdigit/AviaryInsights";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.1;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -569,11 +557,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CF6868C42F2780B500C31A17 /* XCRemoteSwiftPackageReference "AppUpdater" */;
 			productName = AppUpdater;
-		};
-		CFA000022F24000100000001 /* AviaryInsights */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CFA000072F24000100000004 /* XCRemoteSwiftPackageReference "AviaryInsights" */;
-			productName = AviaryInsights;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
