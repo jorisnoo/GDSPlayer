@@ -201,6 +201,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         validateDeferredUpdate()
         #endif
 
+        Analytics.initialize()
         Analytics.appOpened()
     }
 
