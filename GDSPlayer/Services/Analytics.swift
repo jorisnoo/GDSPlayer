@@ -43,5 +43,6 @@ enum Analytics {
         allProps["distribution"] = distribution
 
         Aptabase.shared.trackEvent(event, with: allProps)
+        Aptabase.shared.flush()
     }
 }
