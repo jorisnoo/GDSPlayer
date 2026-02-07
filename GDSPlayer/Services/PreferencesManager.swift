@@ -10,6 +10,7 @@ final class PreferencesManager {
 
     private let musicServiceKey = "selectedMusicService"
     private let showVinylIconKey = "showVinylIcon"
+    private let clickToPlayKey = "clickToPlay"
     private let deferredUpdateKey = "deferredUpdate"
 
     private init() {}
@@ -38,6 +39,19 @@ final class PreferencesManager {
         }
         set {
             UserDefaults.standard.set(newValue, forKey: showVinylIconKey)
+        }
+    }
+
+    var clickToPlay: Bool {
+        get {
+            if UserDefaults.standard.object(forKey: clickToPlayKey) == nil {
+                return true
+            }
+
+            return UserDefaults.standard.bool(forKey: clickToPlayKey)
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: clickToPlayKey)
         }
     }
 

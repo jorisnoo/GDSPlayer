@@ -338,7 +338,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @objc private func statusItemClicked(_ sender: NSStatusBarButton) {
         guard let event = NSApp.currentEvent else { return }
 
-        if event.type == .rightMouseUp {
+        let clickToPlay = PreferencesManager.shared.clickToPlay
+        let isMenuClick = clickToPlay ? event.type == .rightMouseUp : event.type == .leftMouseUp
+
+        if isMenuClick {
             statusItem.menu = buildMenu()
             statusItem.button?.performClick(nil)
             statusItem.menu = nil
@@ -495,6 +498,30 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         vinylIconItem.state = PreferencesManager.shared.showVinylIcon ? .on : .off
         settingsMenu.addItem(vinylIconItem)
 
+        settingsMenu.addItem(.separator())
+
+        let clickToPlay = PreferencesManager.shared.clickToPlay
+
+        let clickToPlayItem = NSMenuItem(
+            title: "Click to Play/Pause",
+            action: #selector(selectClickAction(_:)),
+            keyEquivalent: ""
+        )
+        clickToPlayItem.target = self
+        clickToPlayItem.representedObject = true
+        clickToPlayItem.state = clickToPlay ? .on : .off
+        settingsMenu.addItem(clickToPlayItem)
+
+        let clickToMenuItem = NSMenuItem(
+            title: "Click to Open Menu",
+            action: #selector(selectClickAction(_:)),
+            keyEquivalent: ""
+        )
+        clickToMenuItem.target = self
+        clickToMenuItem.representedObject = false
+        clickToMenuItem.state = clickToPlay ? .off : .on
+        settingsMenu.addItem(clickToMenuItem)
+
         let settingsItem = NSMenuItem(title: "Settings", action: nil, keyEquivalent: "")
         settingsItem.submenu = settingsMenu
         menu.addItem(settingsItem)
@@ -569,5 +596,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @objc private func toggleVinylIcon(_ sender: NSMenuItem) {
         PreferencesManager.shared.showVinylIcon.toggle()
         updateIcon()
+    }
+
+    @objc private func selectClickAction(_ sender: NSMenuItem) {
+        guard let value = sender.representedObject as? Bool else { return }
+
+        PreferencesManager.shared.clickToPlay = value
     }
 }
