@@ -207,6 +207,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        Analytics.appClosed()
+
         #if !APP_STORE
         if let deferredUpdate = PreferencesManager.shared.deferredUpdate {
             guard !isInstallingUpdate else {
