@@ -190,6 +190,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         player.onStateChange = { [weak self] in
             self?.updateIcon()
+            self?.updateTooltip()
             self?.buildMenu()
         }
 
@@ -347,6 +348,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             statusItem.menu = nil
         } else {
             player.togglePlayback()
+        }
+    }
+
+    private func updateTooltip() {
+        switch player.state {
+        case .stopped:
+            statusItem.button?.toolTip = nil
+        case .loading, .playing:
+            if let artistName = player.artistName, let trackTitle = player.trackTitle {
+                statusItem.button?.toolTip = "\(artistName) — \(trackTitle)"
+            } else {
+                statusItem.button?.toolTip = "GDS.FM"
+            }
         }
     }
 
