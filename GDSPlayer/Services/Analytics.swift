@@ -34,6 +34,10 @@ enum Analytics {
         track("app_opened")
     }
 
+    static func appClosed() {
+        track("app_closed")
+    }
+
     static func outboundLinkClick(url: String) {
         track("outbound_link_click", props: ["url": url])
     }
