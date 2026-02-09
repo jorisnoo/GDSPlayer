@@ -142,6 +142,7 @@ final class RadioPlayer {
         onStateChange?()
         player?.play()
         updateNowPlayingInfo()
+        Analytics.playbackStarted()
     }
 
     func pause() {
@@ -150,6 +151,7 @@ final class RadioPlayer {
         timeControlStatusObserver = nil
         state = .stopped
         onStateChange?()
+        Analytics.playbackStopped()
 
         let nowPlayingCenter = MPNowPlayingInfoCenter.default()
         nowPlayingCenter.playbackState = .stopped
