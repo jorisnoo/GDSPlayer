@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.2](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.2.2) (2026-02-09)
+
+### Features
+
+- track app_closed analytics event before termination ([8fe37b4](https://github.com/jorisnoo/GDSPlayer/commit/8fe37b41a0ea0038d12fcf5c4eb1b00e69e26047))
+- show now-playing info as status bar tooltip ([766c7f4](https://github.com/jorisnoo/GDSPlayer/commit/766c7f4b8d088b787245d54adad58b0c1fc8e49f))
 ## [0.2.1](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.2.1) (2026-02-07)
 
 ### Features
