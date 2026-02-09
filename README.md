@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/jorisnoo/GDSPlayer/releases/latest">Download GDS.FM App</a>
+  ✨<a href="https://github.com/jorisnoo/GDSPlayer/releases/latest">Download</a>✨
 </p>
 
 <p align="center">
