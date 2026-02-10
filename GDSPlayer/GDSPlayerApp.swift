@@ -33,6 +33,7 @@ struct GDSPlayerApp: App {
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem!
     private var player = RadioPlayer()
+    private var heartbeatTimer: Timer?
     private var rotationTimer: Timer?
     private var rotationAngle: CGFloat = 0
     private var rotationIncrement: CGFloat = 0
@@ -204,6 +205,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         Analytics.initialize()
         Analytics.appOpened()
+        startHeartbeat()
+    }
+
+    private func startHeartbeat() {
+        heartbeatTimer = Timer.scheduledTimer(withTimeInterval: 30 * 60, repeats: true) { _ in
+            Task { @MainActor in
+                Analytics.heartbeat()
+            }
+        }
     }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {

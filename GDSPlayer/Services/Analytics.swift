@@ -38,6 +38,18 @@ enum Analytics {
         track("app_closed")
     }
 
+    static func playbackStarted() {
+        track("playback_started")
+    }
+
+    static func playbackStopped() {
+        track("playback_stopped")
+    }
+
+    static func heartbeat() {
+        track("heartbeat")
+    }
+
     static func outboundLinkClick(url: String) {
         track("outbound_link_click", props: ["url": url])
     }
