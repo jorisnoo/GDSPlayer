@@ -550,8 +550,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/jorisnoo/AppUpdater";
 			requirement = {
-				branch = develop;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
 			};
 		};
 		CF7A12CE2F35A10000AB1234 /* XCRemoteSwiftPackageReference "aptabase-swift" */ = {
