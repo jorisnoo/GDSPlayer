@@ -4,6 +4,8 @@
 <dict>
 	<key>AptabaseAppKey</key>
 	<string>A-EU-2866574831</string>
+	<key>AptabaseHost</key>
+	<string>https://aptabase-endpoint-h42wr.bunny.run</string>
 	<key>GitHubOwner</key>
 	<string>jorisnoo</string>
 	<key>GitHubRepo</key>

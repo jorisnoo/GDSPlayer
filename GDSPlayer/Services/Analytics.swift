@@ -17,12 +17,13 @@ enum Analytics {
     }
 
     static func initialize() {
-        guard let appKey = Bundle.main.infoDictionary?["AptabaseAppKey"] as? String else {
-            print("[Analytics] Missing AptabaseAppKey in Info.plist")
-            return
-        }
+        guard let appKey = Bundle.main.infoDictionary?["AptabaseAppKey"] as? String,
+              !appKey.isEmpty
+        else { return }
 
-        Aptabase.shared.initialize(appKey: appKey)
+        let host = Bundle.main.infoDictionary?["AptabaseHost"] as? String
+        let options = InitOptions(host: host)
+        Aptabase.shared.initialize(appKey: appKey, options: options)
     }
 
     static func appOpened() {

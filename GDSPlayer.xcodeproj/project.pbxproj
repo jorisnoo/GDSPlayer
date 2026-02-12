@@ -556,10 +556,10 @@
 		};
 		CF7A12CE2F35A10000AB1234 /* XCRemoteSwiftPackageReference "aptabase-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/aptabase/aptabase-swift.git";
+			repositoryURL = "https://github.com/jorisnoo/aptabase-swift";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.3.4;
+				kind = branch;
+				branch = main;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
