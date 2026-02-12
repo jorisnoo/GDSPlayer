@@ -52,12 +52,12 @@ enum Analytics {
     }
 
     static func outboundLinkClick(url: String) {
-        track("outbound_link_click", props: ["url": url])
+        track("outbound_link_click", props: ["url": .string(url)])
     }
 
-    private static func track(_ event: String, props: [String: String] = [:]) {
+    private static func track(_ event: String, props: [String: EventValue] = [:]) {
         var allProps = props
-        allProps["distribution"] = distribution
+        allProps["distribution"] = .string(distribution)
 
         Aptabase.shared.trackEvent(event, with: allProps)
         Aptabase.shared.flush()
