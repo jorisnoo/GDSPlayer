@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.3](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.2.3) (2026-02-12)
+
+### Features
+
+- add heartbeat, playback started/stopped analytics events ([9b66673](https://github.com/jorisnoo/GDSPlayer/commit/9b66673aa5e8a6815dbc5c5d4055f72a9159284a))
+
+### Continuous Integration
+
+- add Xcode Cloud post-clone script to sync version from Git tags ([aac5bdb](https://github.com/jorisnoo/GDSPlayer/commit/aac5bdb71068ee66284ca11f7013820dcaaa182e))
+
+### Chores
+
+- pin AppUpdater dependency to semver 3.0.0 instead of develop branch ([8aabd7d](https://github.com/jorisnoo/GDSPlayer/commit/8aabd7d47043d29f603ee94a5baf134b55b1f108))
 ## [0.2.2](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.2.2) (2026-02-09)
 
 ### Features
