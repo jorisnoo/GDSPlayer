@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.4](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.2.4) (2026-05-04)
+
+### Features
+
+- add automatic reconnection with exponential backoff and network monitoring ([a82a885](https://github.com/jorisnoo/GDSPlayer/commit/a82a885658197fea545d2c06180ea7903488c2d8))
+
+### Bug Fixes
+
+- update Analytics to match latest Aptabase SDK API changes ([4ffe527](https://github.com/jorisnoo/GDSPlayer/commit/4ffe527de1fe59de829b3cae5763839e28ba1353))
 ## [0.2.3](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.2.3) (2026-02-12)
 
 ### Features
