@@ -2,6 +2,7 @@ import AppKit
 import AVFoundation
 import Foundation
 import MediaPlayer
+import Network
 
 private extension String {
     var decodingHTMLEntities: String {
@@ -33,7 +34,15 @@ final class RadioPlayer {
     private var player: AVPlayer?
     private var pollingTimer: Timer?
     private var timeControlStatusObserver: NSKeyValueObservation?
+    private var itemStatusObserver: NSKeyValueObservation?
+    private var itemNotificationObservers: [NSObjectProtocol] = []
     private var mediaKeyMonitor: Any?
+
+    private let pathMonitor = NWPathMonitor()
+    private var isNetworkAvailable = true
+    private var desiresPlayback = false
+    private var reconnectTask: Task<Void, Never>?
+    private var reconnectAttempt = 0
 
     private(set) var state: PlaybackState = .stopped
     private(set) var showName: String?
@@ -49,6 +58,12 @@ final class RadioPlayer {
         startPolling()
         setupRemoteCommandCenter()
         setupMediaKeyMonitor()
+        startNetworkMonitor()
+    }
+
+    deinit {
+        pathMonitor.cancel()
+        reconnectTask?.cancel()
     }
 
     private func setupMediaKeyMonitor() {
@@ -132,23 +147,18 @@ final class RadioPlayer {
     }
 
     func play() {
-        if player == nil {
-            let playerItem = AVPlayerItem(url: streamURL)
-            player = AVPlayer(playerItem: playerItem)
-            observePlaybackStatus()
-        }
-
-        state = .loading
-        onStateChange?()
-        player?.play()
-        updateNowPlayingInfo()
+        desiresPlayback = true
+        reconnectAttempt = 0
+        startStream()
         Analytics.playbackStarted()
     }
 
     func pause() {
-        player?.pause()
-        player = nil
-        timeControlStatusObserver = nil
+        desiresPlayback = false
+        reconnectTask?.cancel()
+        reconnectTask = nil
+        reconnectAttempt = 0
+        teardownStream()
         state = .stopped
         onStateChange?()
         Analytics.playbackStopped()
@@ -158,13 +168,39 @@ final class RadioPlayer {
         nowPlayingCenter.nowPlayingInfo = nil
     }
 
-    private func observePlaybackStatus() {
-        timeControlStatusObserver = player?.observe(\.timeControlStatus, options: [.new]) { [weak self] player, _ in
+    private func startStream() {
+        teardownStream()
+
+        let playerItem = AVPlayerItem(url: streamURL)
+        let player = AVPlayer(playerItem: playerItem)
+        self.player = player
+
+        observePlaybackStatus(on: player)
+        observeItem(playerItem)
+
+        state = .loading
+        onStateChange?()
+        player.play()
+        updateNowPlayingInfo()
+    }
+
+    private func teardownStream() {
+        player?.pause()
+        player = nil
+        timeControlStatusObserver = nil
+        itemStatusObserver = nil
+        itemNotificationObservers.forEach { NotificationCenter.default.removeObserver($0) }
+        itemNotificationObservers = []
+    }
+
+    private func observePlaybackStatus(on player: AVPlayer) {
+        timeControlStatusObserver = player.observe(\.timeControlStatus, options: [.new]) { [weak self] player, _ in
             Task { @MainActor [weak self] in
                 guard let self else { return }
 
                 switch player.timeControlStatus {
                 case .playing:
+                    self.reconnectAttempt = 0
                     self.state = .playing
                     self.onStateChange?()
                 case .waitingToPlayAtSpecifiedRate:
@@ -176,6 +212,91 @@ final class RadioPlayer {
                     break
                 }
             }
+        }
+    }
+
+    private func observeItem(_ item: AVPlayerItem) {
+        itemStatusObserver = item.observe(\.status, options: [.new]) { [weak self] item, _ in
+            Task { @MainActor [weak self] in
+                guard let self, item.status == .failed else { return }
+                self.handleStreamFailure()
+            }
+        }
+
+        let center = NotificationCenter.default
+        let stalled = center.addObserver(
+            forName: AVPlayerItem.playbackStalledNotification,
+            object: item,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                self.state = .loading
+                self.onStateChange?()
+            }
+        }
+        let failed = center.addObserver(
+            forName: AVPlayerItem.failedToPlayToEndTimeNotification,
+            object: item,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                self?.handleStreamFailure()
+            }
+        }
+        itemNotificationObservers = [stalled, failed]
+    }
+
+    private func handleStreamFailure() {
+        guard desiresPlayback else { return }
+        teardownStream()
+        state = .loading
+        onStateChange?()
+        scheduleReconnect()
+    }
+
+    private func scheduleReconnect() {
+        reconnectTask?.cancel()
+        guard desiresPlayback else { return }
+
+        reconnectAttempt += 1
+        let delay = min(pow(2.0, Double(reconnectAttempt - 1)), 30.0)
+
+        reconnectTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .seconds(delay))
+            guard !Task.isCancelled,
+                  let self,
+                  self.desiresPlayback,
+                  self.isNetworkAvailable
+            else { return }
+            self.startStream()
+        }
+    }
+
+    private func startNetworkMonitor() {
+        pathMonitor.pathUpdateHandler = { [weak self] path in
+            let available = path.status == .satisfied
+            Task { @MainActor [weak self] in
+                self?.handleNetworkChange(isAvailable: available)
+            }
+        }
+        pathMonitor.start(queue: DispatchQueue(label: "com.gds.fm.network-monitor"))
+    }
+
+    private func handleNetworkChange(isAvailable: Bool) {
+        let wasAvailable = isNetworkAvailable
+        isNetworkAvailable = isAvailable
+
+        guard desiresPlayback else { return }
+
+        if !isAvailable, wasAvailable {
+            reconnectTask?.cancel()
+            teardownStream()
+            state = .loading
+            onStateChange?()
+        } else if isAvailable, !wasAvailable {
+            reconnectAttempt = 0
+            startStream()
         }
     }
 
