@@ -222,8 +222,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         #if !APP_STORE
         if let deferredUpdate = PreferencesManager.shared.deferredUpdate {
             guard !isInstallingUpdate else {
+                // Cancel redundant terminate while an install is in flight; the
+                // running task will reply to the original terminate when done.
                 Logger.appUpdater.info("Installation already in progress")
-                return .terminateLater
+                return .terminateCancel
             }
 
             Logger.appUpdater.info("Installing deferred update on quit: \(deferredUpdate.releaseVersion)")
@@ -328,6 +330,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             clearDeferredUpdate()
             return
         }
+
+        // Clear the deferred update before installing so applicationShouldTerminate
+        // (triggered by installThrowing's NSApp.terminate) skips the on-quit install
+        // branch and lets the app terminate immediately.
+        clearDeferredUpdate()
 
         Task { @MainActor in
             do {
