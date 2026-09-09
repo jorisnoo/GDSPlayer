@@ -1,13 +1,13 @@
 {
-  "originHash" : "a53300beae2bbf811afb5677ac127d772ad0e5591184b0db3e07edd45299d626",
+  "originHash" : "79934d483081ddbd23abdd23265b9c9d87c88837f12e9e3fdc75da2d995f845e",
   "pins" : [
     {
       "identity" : "appupdater",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/jorisnoo/AppUpdater",
+      "location" : "https://github.com/jorisnoo/AppUpdater.git",
       "state" : {
-        "revision" : "2bb85cd74b7a30914b6c0f1a6c2d55947969e975",
-        "version" : "3.0.0"
+        "revision" : "09b3531ce382476641bcd4d39cc6ba7471ae1684",
+        "version" : "4.0.0"
       }
     },
     {

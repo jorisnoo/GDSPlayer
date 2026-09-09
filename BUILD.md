@@ -154,19 +154,23 @@ The build scripts and GitHub Actions are configured to use the correct naming.
 
 ### Update Behavior
 
-GitHub distribution builds check for updates every 24 hours:
+GitHub distribution builds use AppUpdater's shared `AppUpdateController`, just like Batzen, Harvie, and RealExporter:
 
-1. Background check runs automatically
-2. If update found, downloads silently
-3. Installs automatically on download completion
-4. User can also manually check via "Check for Updates" menu item
-5. Update applies on next app launch
+1. Check on launch and approximately every 24 hours (macOS may defer background checks).
+2. Download and validate silently, then persist the update.
+3. Install on quit without relaunching.
+4. Manual checks show “Restart Now” / “Install on Quit”, an up-to-date message, or an error.
+5. “Restart and Update” validates and installs the saved update before cleaning up its files.
+
+Debug builds do not check automatically. App Store builds exclude the integration.
+
+The project uses `https://github.com/jorisnoo/AppUpdater.git`, starting at version `4.0.0` with an up-to-next-major requirement. Local and CI builds resolve the package from GitHub; no sibling checkout is required.
 
 ### Update Validation
 
 AppUpdater validates:
 - Assets are downloaded from GitHub releases only
-- Code-signing identity matches current installation
+- Signature integrity, nested code, and all architectures satisfy the installed app's designated requirement
 - Version numbers (semantic versioning)
 
 ## Build Script Options
@@ -202,9 +206,9 @@ Accepts same options as build-release.sh except --configuration
 Check these common issues:
 
 1. **Asset naming** - Must be exactly `GDS.FM-{version}.zip`
-2. **releasePrefix** - Code uses `"GDS.FM"` in `GDSPlayerApp.swift:48`
+2. **releasePrefix** - The shared controller uses `"GDS.FM"` in `GDSPlayerApp.swift`
 3. **Version format** - Must use semantic versioning (X.Y.Z)
-4. **GitHub URL** - Check `Info.plist` for correct `GitHubOwner` and `GitHubRepo`
+4. **GitHub URL** - Check the controller's `owner` and `repo` in `GDSPlayerApp.swift`
 5. **Code signing** - Update must be signed with same Developer ID
 
 ### Notarization Fails

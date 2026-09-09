@@ -2,20 +2,6 @@ import SwiftUI
 
 #if !APP_STORE
 import AppUpdater
-import Version
-
-enum UpdateCheckSource {
-    case automatic
-    case manual
-}
-#endif
-
-#if !APP_STORE
-import os.log
-
-extension Logger {
-    static let appUpdater = Logger(subsystem: "com.gds.fm", category: "AppUpdater")
-}
 #endif
 
 @main
@@ -40,143 +26,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var currentRotatingSymbol: String?
 
     #if !APP_STORE
-    var updater: AppUpdater?
-    var currentCheckSource: UpdateCheckSource?
-    private var isInstallingUpdate = false
-
-    func setupAppUpdater() {
-        guard let owner = Bundle.main.object(forInfoDictionaryKey: "GitHubOwner") as? String,
-              let repo = Bundle.main.object(forInfoDictionaryKey: "GitHubRepo") as? String else {
-            Logger.appUpdater.warning("AppUpdater not configured - check Info.plist for GitHubOwner and GitHubRepo")
-            return
-        }
-
-        let updater = AppUpdater(
-            owner: owner,
-            repo: repo,
-            releasePrefix: "GDS.FM",
-            interval: 24 * 60 * 60  // Check every 24 hours
-        )
-
-        Logger.appUpdater.info("AppUpdater initialized")
-
-        // Setup download callbacks
-        updater.onDownloadSuccess = { [weak self] in
-            Task { @MainActor [weak self] in
-                guard let self = self, let updater = self.updater else { return }
-
-                Logger.appUpdater.info("✅ Update download completed")
-
-                guard case .downloaded(let release, let asset, let newBundle) = updater.state else {
-                    Logger.appUpdater.warning("Download success but state is not .downloaded")
-                    return
-                }
-
-                // Determine action based on check source
-                let checkSource = self.currentCheckSource ?? .automatic
-                self.currentCheckSource = nil // Clear
-
-                switch checkSource {
-                case .automatic:
-                    Logger.appUpdater.info("Automatic update - storing for installation on quit")
-                    self.storeDeferredUpdate(release, asset, newBundle)
-
-                case .manual:
-                    Logger.appUpdater.info("Manual update - showing dialog")
-                    await self.showManualUpdateDialog(release, asset, newBundle)
-                }
-            }
-        }
-
-        updater.onDownloadFail = { error in
-            Task { @MainActor in
-                Logger.appUpdater.error("❌ Update download failed: \(error)")
-            }
-        }
-
-        updater.onInstallFail = { error in
-            Task { @MainActor in
-                Logger.appUpdater.error("❌ Installation failed: \(error)")
-
-                let alert = NSAlert()
-                alert.messageText = "Installation Failed"
-                alert.informativeText = "Could not install update: \(error)"
-                alert.alertStyle = .warning
-                alert.addButton(withTitle: "OK")
-                alert.runModal()
-            }
-        }
-
-        self.updater = updater
-    }
-
-    private func storeDeferredUpdate(_ release: Release, _ asset: Release.Asset, _ bundle: Bundle) {
-        do {
-            let persistedURL = try DeferredUpdate.persistBundle(bundle)
-            Logger.appUpdater.info("Persisted update bundle to: \(persistedURL.path)")
-
-            let deferredUpdate = DeferredUpdate(
-                bundlePath: persistedURL.path,
-                releaseVersion: release.tagName.description,
-                releaseName: release.name,
-                assetName: asset.name
-            )
-
-            PreferencesManager.shared.deferredUpdate = deferredUpdate
-            Logger.appUpdater.info("Stored deferred update: \(deferredUpdate.releaseVersion)")
-        } catch {
-            Logger.appUpdater.error("Failed to store deferred update: \(error)")
-        }
-    }
-
-    private func clearDeferredUpdate() {
-        PreferencesManager.shared.deferredUpdate = nil
-        DeferredUpdate.cleanup()
-        Logger.appUpdater.info("Cleaned up pending updates directory")
-    }
-
-    private func validateDeferredUpdate() {
-        guard let deferredUpdate = PreferencesManager.shared.deferredUpdate else {
-            return
-        }
-
-        if !deferredUpdate.isValid {
-            Logger.appUpdater.info("Deferred update bundle not found at \(deferredUpdate.bundlePath), clearing")
-            clearDeferredUpdate()
-        }
-    }
-
-    private func showManualUpdateDialog(_ release: Release, _ asset: Release.Asset, _ bundle: Bundle) async {
-        let alert = NSAlert()
-        alert.messageText = "Update Downloaded"
-        alert.informativeText = "Version \(release.tagName) is ready to install. Would you like to restart now?"
-        alert.alertStyle = .informational
-        alert.addButton(withTitle: "Restart and Update")
-        alert.addButton(withTitle: "Later")
-
-        let response = alert.runModal()
-
-        if response == .alertFirstButtonReturn {
-            // Install immediately
-            do {
-                try await updater?.installThrowing(bundle)
-            } catch {
-                Logger.appUpdater.error("Failed to install: \(error)")
-
-                let errorAlert = NSAlert()
-                errorAlert.messageText = "Installation Failed"
-                errorAlert.informativeText = "Could not install update: \(error.localizedDescription)"
-                errorAlert.alertStyle = .warning
-                errorAlert.addButton(withTitle: "OK")
-                errorAlert.runModal()
-            }
-        } else {
-            // Store for later
-            Logger.appUpdater.info("User deferred update installation")
-            storeDeferredUpdate(release, asset, bundle)
-        }
-    }
-
+    let updates = AppUpdateController(owner: "jorisnoo", repo: "GDSPlayer", releasePrefix: "GDS.FM")
     #endif
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -199,8 +49,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         player.play()
 
         #if !APP_STORE
-        setupAppUpdater()
-        validateDeferredUpdate()
+        updates.start()
         #endif
 
         Analytics.initialize()
@@ -217,143 +66,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
-        Analytics.appClosed()
-
         #if !APP_STORE
-        if let deferredUpdate = PreferencesManager.shared.deferredUpdate {
-            guard !isInstallingUpdate else {
-                // Cancel redundant terminate while an install is in flight; the
-                // running task will reply to the original terminate when done.
-                Logger.appUpdater.info("Installation already in progress")
-                return .terminateCancel
-            }
-
-            Logger.appUpdater.info("Installing deferred update on quit: \(deferredUpdate.releaseVersion)")
-
-            guard let bundle = deferredUpdate.loadBundle() else {
-                Logger.appUpdater.error("Failed to load deferred bundle at: \(deferredUpdate.bundlePath)")
-                clearDeferredUpdate()
-                return .terminateNow
-            }
-
-            isInstallingUpdate = true
-
-            Task { @MainActor in
-                defer { isInstallingUpdate = false }
-                do {
-                    // Replace bundle without relaunching - user just wants to quit
-                    try updater?.replaceBundle(bundle)
-                    Logger.appUpdater.info("✅ Update installed on quit")
-                    clearDeferredUpdate()
-                } catch {
-                    Logger.appUpdater.error("Failed to install deferred update: \(error)")
-                }
-                sender.reply(toApplicationShouldTerminate: true)
-            }
-
-            return .terminateLater
-        }
-        #endif
-
+        let reply = updates.applicationShouldTerminate(sender)
+        if reply != .terminateCancel { Analytics.appClosed() }
+        return reply
+        #else
+        Analytics.appClosed()
         return .terminateNow
+        #endif
     }
-
-    #if !APP_STORE
-    @objc func checkForUpdates() {
-        guard let updater else {
-            Logger.appUpdater.warning("⚠️ AppUpdater not initialized - check Info.plist for GitHubOwner and GitHubRepo")
-            return
-        }
-
-        Logger.appUpdater.info("🔍 Starting manual update check")
-
-        // Clear any existing deferred update
-        if PreferencesManager.shared.deferredUpdate != nil {
-            Logger.appUpdater.info("Clearing existing deferred update for manual check")
-            clearDeferredUpdate()
-        }
-
-        // Mark as manual check
-        currentCheckSource = .manual
-
-        updater.check(
-            success: { [weak self] in
-                Task { @MainActor [weak self] in
-                    Logger.appUpdater.info("✅ Update downloaded successfully")
-                    self?.updater?.onDownloadSuccess?()
-                }
-            },
-            fail: { [weak self] error in
-                Task { @MainActor [weak self] in
-                    self?.currentCheckSource = nil // Clear on failure
-
-                    if let updateError = error as? AppUpdater.Error, case .noValidUpdate = updateError {
-                        Logger.appUpdater.info("ℹ️ No updates available")
-
-                        let alert = NSAlert()
-                        alert.messageText = "No Updates Available"
-                        alert.informativeText = "You're running the latest version of GDS.FM."
-                        alert.alertStyle = .informational
-                        alert.addButton(withTitle: "OK")
-                        alert.runModal()
-                    } else {
-                        Logger.appUpdater.error("❌ Update check error: \(error)")
-
-                        let alert = NSAlert()
-                        alert.messageText = "Update Check Failed"
-                        alert.informativeText = "Could not check for updates. Please try again later."
-                        alert.alertStyle = .warning
-                        alert.addButton(withTitle: "OK")
-                        alert.runModal()
-                    }
-                }
-            }
-        )
-    }
-
-    @objc func installDeferredUpdateFromMenu() {
-        guard let deferredUpdate = PreferencesManager.shared.deferredUpdate else {
-            Logger.appUpdater.warning("No deferred update available")
-            return
-        }
-
-        guard let bundle = deferredUpdate.loadBundle() else {
-            Logger.appUpdater.error("Failed to load deferred bundle")
-
-            let alert = NSAlert()
-            alert.messageText = "Installation Failed"
-            alert.informativeText = "Could not load the update bundle. The update has been cleared."
-            alert.alertStyle = .warning
-            alert.addButton(withTitle: "OK")
-            alert.runModal()
-
-            clearDeferredUpdate()
-            return
-        }
-
-        // Clear the deferred update before installing so applicationShouldTerminate
-        // (triggered by installThrowing's NSApp.terminate) skips the on-quit install
-        // branch and lets the app terminate immediately.
-        clearDeferredUpdate()
-
-        Task { @MainActor in
-            do {
-                Logger.appUpdater.info("Installing update from menu")
-                try await updater?.installThrowing(bundle)
-            } catch {
-                Logger.appUpdater.error("Failed to install from menu: \(error)")
-
-                let alert = NSAlert()
-                alert.messageText = "Installation Failed"
-                alert.informativeText = "Could not install update: \(error.localizedDescription)"
-                alert.alertStyle = .warning
-                alert.addButton(withTitle: "OK")
-                alert.runModal()
-            }
-        }
-    }
-
-    #endif
 
     @objc private func statusItemClicked(_ sender: NSStatusBarButton) {
         guard let event = NSApp.currentEvent else { return }
@@ -562,23 +283,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(.separator())
 
         #if !APP_STORE
-        if PreferencesManager.shared.deferredUpdate != nil {
-            let installItem = NSMenuItem(
-                title: "Install Update & Restart",
-                action: #selector(installDeferredUpdateFromMenu),
-                keyEquivalent: ""
-            )
-            installItem.target = self
-            menu.addItem(installItem)
-        } else {
-            let updateItem = NSMenuItem(
-                title: "Check for Updates...",
-                action: #selector(checkForUpdates),
-                keyEquivalent: ""
-            )
-            updateItem.target = self
-            menu.addItem(updateItem)
-        }
+        for item in updates.menuItems() { menu.addItem(item) }
         #endif
 
         let quitItem = NSMenuItem(title: "Quit", action: #selector(quit), keyEquivalent: "q")
