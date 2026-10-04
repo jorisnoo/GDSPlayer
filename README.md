@@ -28,7 +28,7 @@
 1. Open `GDSPlayer.xcodeproj` in Xcode
 2. Build and run (⌘R)
 
-For release builds, notarisation, and CI/CD setup, see [docs/BUILD.md](docs/BUILD.md).
+For releases, signed builds and notarisation, see [RELEASING.md](RELEASING.md).
 
 ## License
 

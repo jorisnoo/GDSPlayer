@@ -1,0 +1,21 @@
+{
+  "branch": "main",
+  "sign_tag": true,
+  "version_files": [],
+  "checks": [
+    [
+      "xcodebuild",
+      "-project",
+      "GDSPlayer.xcodeproj",
+      "-scheme",
+      "GDSPlayer",
+      "-configuration",
+      "Debug",
+      "-derivedDataPath",
+      "/tmp/GDSPlayer-release-check",
+      "CODE_SIGNING_ALLOWED=NO",
+      "build"
+    ]
+  ],
+  "stable_only": true
+}

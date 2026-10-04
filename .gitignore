@@ -10,3 +10,6 @@ DerivedData/
 # macOS
 .DS_Store
 CLAUDE.md
+
+# Keep shared agent instructions in the repository.
+!/CLAUDE.md

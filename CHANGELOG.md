@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.2.4](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.2.4) (2026-05-04)
+## [0.2.4](https://github.com/jorisnoo/GDSPlayer/releases/tag/0.2.4) (2026-05-04)
 
 ### Features
 
@@ -11,7 +11,7 @@ All notable changes to this project will be documented in this file.
 ### Bug Fixes
 
 - update Analytics to match latest Aptabase SDK API changes ([4ffe527](https://github.com/jorisnoo/GDSPlayer/commit/4ffe527de1fe59de829b3cae5763839e28ba1353))
-## [0.2.3](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.2.3) (2026-02-12)
+## [0.2.3](https://github.com/jorisnoo/GDSPlayer/releases/tag/0.2.3) (2026-02-12)
 
 ### Features
 
@@ -24,13 +24,13 @@ All notable changes to this project will be documented in this file.
 ### Chores
 
 - pin AppUpdater dependency to semver 3.0.0 instead of develop branch ([8aabd7d](https://github.com/jorisnoo/GDSPlayer/commit/8aabd7d47043d29f603ee94a5baf134b55b1f108))
-## [0.2.2](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.2.2) (2026-02-09)
+## [0.2.2](https://github.com/jorisnoo/GDSPlayer/releases/tag/0.2.2) (2026-02-09)
 
 ### Features
 
 - track app_closed analytics event before termination ([8fe37b4](https://github.com/jorisnoo/GDSPlayer/commit/8fe37b41a0ea0038d12fcf5c4eb1b00e69e26047))
 - show now-playing info as status bar tooltip ([766c7f4](https://github.com/jorisnoo/GDSPlayer/commit/766c7f4b8d088b787245d54adad58b0c1fc8e49f))
-## [0.2.1](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.2.1) (2026-02-07)
+## [0.2.1](https://github.com/jorisnoo/GDSPlayer/releases/tag/0.2.1) (2026-02-07)
 
 ### Features
 
@@ -39,7 +39,7 @@ All notable changes to this project will be documented in this file.
 ### Bug Fixes
 
 - flush analytics events immediately after tracking ([537b88f](https://github.com/jorisnoo/GDSPlayer/commit/537b88f5b22d2c6e9a85f39f484d0b38acdf211b))
-## [0.2.0](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.2.0) (2026-02-06)
+## [0.2.0](https://github.com/jorisnoo/GDSPlayer/releases/tag/0.2.0) (2026-02-06)
 
 ### Features
 
@@ -50,6 +50,6 @@ All notable changes to this project will be documented in this file.
 ### Documentation
 
 - cleanup changelog ([ae2bd34](https://github.com/jorisnoo/GDSPlayer/commit/ae2bd347135640113643dc59c2dfd58488ac55db))
-## [0.1.8](https://github.com/jorisnoo/GDSPlayer/releases/tag/v0.1.8) (2026-01-26)
+## [0.1.8](https://github.com/jorisnoo/GDSPlayer/releases/tag/0.1.8) (2026-01-26)
 
 Initial Release.
