@@ -23,7 +23,7 @@ enum Analytics {
 
         let host = Bundle.main.infoDictionary?["AptabaseHost"] as? String
         let options = InitOptions(host: host)
-        Aptabase.shared.initialize(appKey: appKey, options: options)
+        Aptabase.shared.initialize(appKey: appKey, with: options)
     }
 
     static func appOpened() {
@@ -52,12 +52,12 @@ enum Analytics {
     }
 
     static func outboundLinkClick(url: String) {
-        track("outbound_link_click", props: ["url": .string(url)])
+        track("outbound_link_click", props: ["url": url])
     }
 
-    private static func track(_ event: String, props: [String: EventValue] = [:]) {
+    private static func track(_ event: String, props: [String: Value] = [:]) {
         var allProps = props
-        allProps["distribution"] = .string(distribution)
+        allProps["distribution"] = distribution
 
         Aptabase.shared.trackEvent(event, with: allProps)
         Aptabase.shared.flush()
