@@ -313,9 +313,10 @@ final class RadioPlayer {
             let (data, _) = try await URLSession.shared.data(from: apiURL)
             let liveInfo = try JSONDecoder().decode(LiveInfo.self, from: data)
 
+            let current = liveInfo.tracks.current?.artistAndTitle
             showName = liveInfo.shows.current?.name
-            artistName = liveInfo.tracks.current?.metadata?.artistName?.decodingHTMLEntities
-            trackTitle = liveInfo.tracks.current?.metadata?.trackTitle?.decodingHTMLEntities
+            artistName = current?.artist?.decodingHTMLEntities
+            trackTitle = current?.title?.decodingHTMLEntities
             onStateChange?()
 
             if state == .playing {
