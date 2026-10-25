@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.5] - 2026-10-25
+
+### Fixed
+
+- Show the current artist and track again. GDS.FM now relays most programming as a webstream, which only reports an "Artist - Title" string; the player now reads it.
+- Quitting the app no longer hangs or misbehaves while an update is being installed.
+- The app-closed analytics event is now sent before the app quits instead of being lost.
+
+### Changed
+
+- Updates now use AppUpdater's shared update controller: the app checks on launch and about every 24 hours, downloads updates silently and installs them on quit. "Check for Updates" offers "Restart Now" or "Install on Quit" when an update is available.
+- Switched analytics to the upstream aptabase-swift 0.4.0 package.
+
 ## [0.2.4](https://github.com/jorisnoo/GDSPlayer/releases/tag/0.2.4) (2026-05-04)
 
 ### Features
