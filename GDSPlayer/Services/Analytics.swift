@@ -35,8 +35,18 @@ enum Analytics {
         track("app_opened")
     }
 
-    static func appClosed() {
+    /// Tracks the close and waits up to two seconds for pending events to be sent.
+    static func appClosed() async {
         track("app_closed")
+
+        // trackEvent queues the event in a background task, so let it land before flushing.
+        try? await Task.sleep(for: .milliseconds(100))
+        await withTaskGroup(of: Void.self) { group in
+            group.addTask { await Aptabase.shared.flush() }
+            group.addTask { try? await Task.sleep(for: .seconds(2)) }
+            await group.next()
+            group.cancelAll()
+        }
     }
 
     static func playbackStarted() {
@@ -60,6 +70,5 @@ enum Analytics {
         allProps["distribution"] = distribution
 
         Aptabase.shared.trackEvent(event, with: allProps)
-        Aptabase.shared.flush()
     }
 }

@@ -68,12 +68,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         #if !APP_STORE
         let reply = updates.applicationShouldTerminate(sender)
-        if reply != .terminateCancel { Analytics.appClosed() }
-        return reply
-        #else
-        Analytics.appClosed()
-        return .terminateNow
+        guard reply == .terminateNow else {
+            // AppUpdater replies itself once the update is installed.
+            if reply == .terminateLater { Task { await Analytics.appClosed() } }
+            return reply
+        }
         #endif
+
+        // Quit only after app_closed has been sent, or the request dies with the process.
+        Task {
+            await Analytics.appClosed()
+            sender.reply(toApplicationShouldTerminate: true)
+        }
+        return .terminateLater
     }
 
     @objc private func statusItemClicked(_ sender: NSStatusBarButton) {
