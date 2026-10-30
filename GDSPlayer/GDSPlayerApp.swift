@@ -185,9 +185,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func buildMenu() -> NSMenu {
         let menu = NSMenu()
 
-        let headerItem = NSMenuItem(title: "GDS.FM", action: #selector(openWebsite), keyEquivalent: "")
+        let headerItem = NSMenuItem(title: "GDS.FM", action: #selector(openLink(_:)), keyEquivalent: "")
         headerItem.target = self
+        headerItem.representedObject = "https://gds.fm"
         menu.addItem(headerItem)
+
+        let memberItem = NSMenuItem(title: "Become a Member", action: #selector(openLink(_:)), keyEquivalent: "")
+        memberItem.target = self
+        memberItem.representedObject = "https://gds.fm/member"
+        menu.addItem(memberItem)
 
         menu.addItem(.separator())
 
@@ -320,8 +326,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func refreshOpenMenu() {
         guard let menu = openMenu else { return }
 
-        // The now playing items sit after the header and its separator.
-        let index = 2
+        // The now playing items sit right after the first separator.
+        guard let separator = menu.items.firstIndex(where: \.isSeparatorItem) else { return }
+        let index = separator + 1
         nowPlayingItems.forEach(menu.removeItem)
         nowPlayingItems = makeNowPlayingItems()
         for (offset, item) in nowPlayingItems.enumerated() {
@@ -335,8 +342,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         player.togglePlayback()
     }
 
-    @objc private func openWebsite() {
-        let url = "https://gds.fm"
+    @objc private func openLink(_ sender: NSMenuItem) {
+        guard let url = sender.representedObject as? String else { return }
         Analytics.outboundLinkClick(url: url)
         NSWorkspace.shared.open(URL(string: url)!)
     }
