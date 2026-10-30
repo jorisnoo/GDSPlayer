@@ -24,6 +24,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var rotationAngle: CGFloat = 0
     private var rotationIncrement: CGFloat = 0
     private var currentRotatingSymbol: String?
+    private weak var openMenu: NSMenu?
+    private var nowPlayingItems: [NSMenuItem] = []
+    private weak var playPauseItem: NSMenuItem?
 
     #if !APP_STORE
     let updates = AppUpdateController(owner: "jorisnoo", repo: "GDSPlayer", releasePrefix: "GDS.FM")
@@ -42,10 +45,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         player.onStateChange = { [weak self] in
             self?.updateIcon()
             self?.updateTooltip()
-            self?.buildMenu()
+            self?.refreshOpenMenu()
         }
 
-        buildMenu()
         player.play()
 
         #if !APP_STORE
@@ -90,9 +92,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let isMenuClick = clickToPlay ? event.type == .rightMouseUp : event.type == .leftMouseUp
 
         if isMenuClick {
-            statusItem.menu = buildMenu()
+            let menu = buildMenu()
+            openMenu = menu
+            statusItem.menu = menu
+            // Returns once the menu closes.
             statusItem.button?.performClick(nil)
             statusItem.menu = nil
+            openMenu = nil
         } else {
             player.togglePlayback()
         }
@@ -176,7 +182,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         currentRotatingSymbol = nil
     }
 
-    @discardableResult
     private func buildMenu() -> NSMenu {
         let menu = NSMenu()
 
@@ -186,35 +191,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         menu.addItem(.separator())
 
-        if let showName = player.showName {
-            let item = NSMenuItem(title: showName, action: nil, keyEquivalent: "")
-            item.isEnabled = false
-            menu.addItem(item)
-        }
-
-        if let trackTitle = player.trackTitle, let artistName = player.artistName {
-            let item = NSMenuItem(title: "\(artistName) — \(trackTitle)", action: #selector(searchTrack(_:)), keyEquivalent: "")
-            item.target = self
-            item.representedObject = ["artist": artistName, "track": trackTitle]
-            menu.addItem(item)
-        } else if let trackTitle = player.trackTitle {
-            let item = NSMenuItem(title: trackTitle, action: #selector(searchTrack(_:)), keyEquivalent: "")
-            item.target = self
-            item.representedObject = ["artist": "", "track": trackTitle]
-            menu.addItem(item)
-        }
+        nowPlayingItems = makeNowPlayingItems()
+        nowPlayingItems.forEach(menu.addItem)
 
         menu.addItem(.separator())
-
-        let playPauseTitle: String
-        switch player.state {
-        case .stopped:
-            playPauseTitle = "Play"
-        case .loading:
-            playPauseTitle = "Stop"
-        case .playing:
-            playPauseTitle = "Pause"
-        }
 
         let playPauseItem = NSMenuItem(
             title: playPauseTitle,
@@ -223,6 +203,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
         playPauseItem.target = self
         menu.addItem(playPauseItem)
+        self.playPauseItem = playPauseItem
 
         menu.addItem(.separator())
 
@@ -298,6 +279,56 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(quitItem)
 
         return menu
+    }
+
+    private func makeNowPlayingItems() -> [NSMenuItem] {
+        var items: [NSMenuItem] = []
+
+        if let showName = player.showName {
+            let item = NSMenuItem(title: showName, action: nil, keyEquivalent: "")
+            item.isEnabled = false
+            items.append(item)
+        }
+
+        if let trackTitle = player.trackTitle, let artistName = player.artistName {
+            let item = NSMenuItem(title: "\(artistName) — \(trackTitle)", action: #selector(searchTrack(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = ["artist": artistName, "track": trackTitle]
+            items.append(item)
+        } else if let trackTitle = player.trackTitle {
+            let item = NSMenuItem(title: trackTitle, action: #selector(searchTrack(_:)), keyEquivalent: "")
+            item.target = self
+            item.representedObject = ["artist": "", "track": trackTitle]
+            items.append(item)
+        }
+
+        return items
+    }
+
+    private var playPauseTitle: String {
+        switch player.state {
+        case .stopped:
+            return "Play"
+        case .loading:
+            return "Stop"
+        case .playing:
+            return "Pause"
+        }
+    }
+
+    /// Updates only the items that change with playback, so an open submenu stays open.
+    private func refreshOpenMenu() {
+        guard let menu = openMenu else { return }
+
+        // The now playing items sit after the header and its separator.
+        let index = 2
+        nowPlayingItems.forEach(menu.removeItem)
+        nowPlayingItems = makeNowPlayingItems()
+        for (offset, item) in nowPlayingItems.enumerated() {
+            menu.insertItem(item, at: index + offset)
+        }
+
+        playPauseItem?.title = playPauseTitle
     }
 
     @objc private func togglePlayback() {

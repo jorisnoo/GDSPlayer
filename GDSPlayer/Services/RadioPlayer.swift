@@ -26,6 +26,26 @@ enum PlaybackState {
     case playing
 }
 
+/// Reports the stream's ICY title as playback reaches it.
+private final class StreamTitleObserver: NSObject, AVPlayerItemMetadataOutputPushDelegate {
+    var onTitle: ((String) -> Void)?
+
+    nonisolated func metadataOutput(
+        _ output: AVPlayerItemMetadataOutput,
+        didOutputTimedMetadataGroups groups: [AVTimedMetadataGroup],
+        from track: AVPlayerItemTrack?
+    ) {
+        guard let item = groups.flatMap(\.items).first(where: { $0.identifier == .icyMetadataStreamTitle }) else {
+            return
+        }
+
+        Task { @MainActor [weak self] in
+            guard let title = try? await item.load(.stringValue) else { return }
+            self?.onTitle?(title)
+        }
+    }
+}
+
 @MainActor
 final class RadioPlayer {
     private let streamURL = URL(string: "https://gdsfm.out.airtime.pro/gdsfm_a")!
@@ -37,6 +57,9 @@ final class RadioPlayer {
     private var itemStatusObserver: NSKeyValueObservation?
     private var itemNotificationObservers: [NSObjectProtocol] = []
     private var mediaKeyMonitor: Any?
+    private let streamTitleObserver = StreamTitleObserver()
+    /// The track from the stream's own metadata, which changes with the audio; preferred over the API's.
+    private var streamTrack: (artist: String, title: String)?
 
     private let pathMonitor = NWPathMonitor()
     private var isNetworkAvailable = true
@@ -56,6 +79,9 @@ final class RadioPlayer {
             await fetchTrackInfo()
         }
         startPolling()
+        streamTitleObserver.onTitle = { [weak self] title in
+            self?.handleStreamTitle(title)
+        }
         setupRemoteCommandCenter()
         setupMediaKeyMonitor()
         startNetworkMonitor()
@@ -172,6 +198,9 @@ final class RadioPlayer {
         teardownStream()
 
         let playerItem = AVPlayerItem(url: streamURL)
+        let metadataOutput = AVPlayerItemMetadataOutput(identifiers: [AVMetadataIdentifier.icyMetadataStreamTitle.rawValue])
+        metadataOutput.setDelegate(streamTitleObserver, queue: .main)
+        playerItem.add(metadataOutput)
         let player = AVPlayer(playerItem: playerItem)
         self.player = player
 
@@ -187,6 +216,7 @@ final class RadioPlayer {
     private func teardownStream() {
         player?.pause()
         player = nil
+        streamTrack = nil
         timeControlStatusObserver = nil
         itemStatusObserver = nil
         itemNotificationObservers.forEach { NotificationCenter.default.removeObserver($0) }
@@ -301,22 +331,45 @@ final class RadioPlayer {
     }
 
     private func startPolling() {
-        pollingTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { [weak self] _ in
+        let timer = Timer(timeInterval: 30, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in
                 await self?.fetchTrackInfo()
             }
         }
+        // Common modes keep polling while the status menu is open.
+        RunLoop.main.add(timer, forMode: .common)
+        pollingTimer = timer
+    }
+
+    private func handleStreamTitle(_ title: String) {
+        guard player != nil else { return }
+
+        streamTrack = title.streamTitleArtistAndTitle
+        guard let streamTrack else {
+            // No usable title in the stream; fall back to the API.
+            Task { await fetchTrackInfo() }
+            return
+        }
+
+        artistName = streamTrack.artist.decodingHTMLEntities
+        trackTitle = streamTrack.title.decodingHTMLEntities
+        onStateChange?()
+        updateNowPlayingInfo()
     }
 
     private func fetchTrackInfo() async {
         do {
-            let (data, _) = try await URLSession.shared.data(from: apiURL)
+            // The API allows 30 s caching, which would add to its own delay.
+            let request = URLRequest(url: apiURL, cachePolicy: .reloadIgnoringLocalCacheData)
+            let (data, _) = try await URLSession.shared.data(for: request)
             let liveInfo = try JSONDecoder().decode(LiveInfo.self, from: data)
 
-            let current = liveInfo.tracks.current?.artistAndTitle
             showName = liveInfo.shows.current?.name
-            artistName = current?.artist?.decodingHTMLEntities
-            trackTitle = current?.title?.decodingHTMLEntities
+            if streamTrack == nil {
+                let current = liveInfo.tracks.current?.artistAndTitle
+                artistName = current?.artist?.decodingHTMLEntities
+                trackTitle = current?.title?.decodingHTMLEntities
+            }
             onStateChange?()
 
             if state == .playing {

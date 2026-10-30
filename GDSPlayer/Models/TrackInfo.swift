@@ -20,14 +20,27 @@ struct Track: Codable {
             return (metadata?.artistName, metadata?.trackTitle)
         }
 
-        guard let liveMetadata = metadata?.liveMetadata,
-              let separator = liveMetadata.range(of: " - ")
-        else { return (nil, nil) }
+        guard let track = metadata?.liveMetadata?.artistAndTitle else { return (nil, nil) }
+        return (track.artist, track.title)
+    }
+}
 
-        let artist = liveMetadata[..<separator.lowerBound].trimmingCharacters(in: .whitespaces)
-        let title = liveMetadata[separator.upperBound...].trimmingCharacters(in: .whitespaces)
-        guard !artist.isEmpty, !title.isEmpty else { return (nil, nil) }
+extension String {
+    /// Splits an "Artist - Title" string; both parts must be present.
+    var artistAndTitle: (artist: String, title: String)? {
+        guard let separator = range(of: " - ") else { return nil }
+
+        let artist = self[..<separator.lowerBound].trimmingCharacters(in: .whitespaces)
+        let title = self[separator.upperBound...].trimmingCharacters(in: .whitespaces)
+        guard !artist.isEmpty, !title.isEmpty else { return nil }
         return (artist, title)
+    }
+
+    /// The stream's ICY title prefixes webstream relays with their source and an
+    /// empty field: "Helvetica -  - Artist - Title".
+    var streamTitleArtistAndTitle: (artist: String, title: String)? {
+        let track = range(of: " -  - ").map { String(self[$0.upperBound...]) } ?? self
+        return track.artistAndTitle
     }
 }
 
