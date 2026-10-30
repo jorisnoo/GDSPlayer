@@ -321,12 +321,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
-        if let url = MusicSearchService.openSearch(
-            artist: artist,
-            track: track,
-            service: PreferencesManager.shared.selectedMusicService
-        ) {
-            Analytics.outboundLinkClick(url: url)
+        Task {
+            if let url = await MusicSearchService.openSearch(
+                artist: artist,
+                track: track,
+                service: PreferencesManager.shared.selectedMusicService
+            ) {
+                Analytics.outboundLinkClick(url: url)
+            }
         }
     }
 
