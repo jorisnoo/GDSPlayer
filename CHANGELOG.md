@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.7] - 2026-10-30
+
+### Added
+
+- A "Become a Member" item in the menu opens the GDS.FM membership page.
+
 ## [0.2.6] - 2026-10-30
 
 ### Added
