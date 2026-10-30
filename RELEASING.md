@@ -37,6 +37,8 @@ Verify the workflow and published release/assets before reporting success. If a 
 
 The tag workflow builds, signs and notarises the app, then publishes the DMG and ZIP with these notes. Keep the existing signing secrets and asset naming: the ZIP must contain one top-level `.app`, its bundle version must match the tag, and AppUpdater must be able to find the versioned ZIP. The build script receives the tag as `--version`; do not edit generated archives or introduce a second GitHub release command.
 
+The workflow also updates the `gds-fm` cask in [jorisnoo/homebrew-tap](https://github.com/jorisnoo/homebrew-tap) using the `HOMEBREW_TAP_PAT` secret.
+
 For a local signed build, use `./scripts/build-release.sh --clean --notarise --version X.Y.Z`. GitHub Actions remains responsible for publishing release assets.
 
 Apple app releases use stable numeric `X.Y.Z` versions. Keep the app’s marketing version in sync with the release tag; use an increasing build number for TestFlight/App Store submissions.

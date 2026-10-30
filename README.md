@@ -18,6 +18,14 @@
 
 ---
 
+## Install
+
+```sh
+brew install jorisnoo/tap/gds-fm
+```
+
+Or download the latest DMG from [Releases](https://github.com/jorisnoo/GDSPlayer/releases/latest).
+
 ## Requirements
 
 - macOS 15+ (Catalina)
