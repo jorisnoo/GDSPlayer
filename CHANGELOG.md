@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.6] - 2026-10-30
+
+### Added
+
+- Install with Homebrew: `brew install jorisnoo/tap/gds-fm`.
+
+### Changed
+
+- While playing, the artist and track now come from the stream itself, so the menu, tooltip and Now Playing change with the music instead of up to a minute later.
+- The menu now updates while it is open when the track or playback state changes.
+
+### Fixed
+
+- Clicking the current track with Apple Music selected now opens the best matching song in the Music app. The Music app ignored the search link it opened before.
+- Tracks with characters such as `&` or `+` in their names are now searched correctly on Apple Music and Tidal.
+
 ## [0.2.5] - 2026-10-25
 
 ### Fixed
