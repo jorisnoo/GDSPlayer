@@ -48,6 +48,7 @@ enum MusicSearchService {
             return try JSONDecoder().decode(ITunesSearchResponse.self, from: data).results.first?.trackViewUrl
         } catch {
             print("Failed to look up Apple Music track: \(error)")
+            Analytics.trackError(error)
             return nil
         }
     }

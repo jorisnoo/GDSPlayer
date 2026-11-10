@@ -65,6 +65,17 @@ enum Analytics {
         track("outbound_link_click", props: ["url": url])
     }
 
+    /// Reports a handled error. Only the error's domain and code are sent, never its
+    /// message, which can contain file names or other user content. Cancellations
+    /// are skipped.
+    static func trackError(_ error: Error) {
+        guard !(error is CancellationError) else { return }
+        let nsError = error as NSError
+        if nsError.domain == NSCocoaErrorDomain && nsError.code == NSUserCancelledError { return }
+        if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled { return }
+        Aptabase.shared.trackError(NSError(domain: nsError.domain, code: nsError.code))
+    }
+
     private static func track(_ event: String, props: [String: Value] = [:]) {
         var allProps = props
         allProps["distribution"] = distribution

@@ -377,6 +377,8 @@ final class RadioPlayer {
             }
         } catch {
             print("Failed to fetch track info: \(error)")
+            // Polling fails on every tick while offline; only a changed API is worth a report.
+            if !(error is URLError) { Analytics.trackError(error) }
         }
     }
 }
